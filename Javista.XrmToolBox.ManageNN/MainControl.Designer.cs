@@ -241,6 +241,7 @@ namespace Javista.XrmToolBox.ManageNN
             this.tsddbSeparator.Name = "tsddbSeparator";
             this.tsddbSeparator.Size = new System.Drawing.Size(184, 29);
             this.tsddbSeparator.Text = "Separator : Comma";
+            this.tsddbSeparator.Tag = ',';
             this.tsddbSeparator.ToolTipText = "Select the separator to use to read/create the file that manages NN relationships" +
     "";
             this.tsddbSeparator.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.tsddbSeparator_DropDownItemClicked);
