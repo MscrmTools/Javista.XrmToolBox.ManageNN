@@ -298,7 +298,14 @@ namespace Javista.XrmToolBox.ManageNN
                     ie.RaiseSuccess += ie_RaiseSuccess;
                     ie.Delete();
                 },
-                PostWorkCallBack = evt => { }
+                PostWorkCallBack = evt =>
+                {
+                    if (evt.Error != null)
+                    {
+                        MessageBox.Show(this, $"An error occured during delete: {evt.Error.Message}", "Error",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
             });
         }
 
