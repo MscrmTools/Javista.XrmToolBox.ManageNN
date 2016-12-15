@@ -34,8 +34,17 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
 
         public event EventHandler<ResultEventArgs> RaiseSuccess;
 
+        public event EventHandler<ResultEventArgs> SendInformation;
+
         public void Import()
         {
+            if (!File.Exists(filePath))
+            {
+                SendInformation?.Invoke(this,new ResultEventArgs {Message = $"File '{filePath}' does not exist"});
+            }
+
+            SendInformation?.Invoke(this, new ResultEventArgs { Message = $"Separator is '{settings.Separator}'" });
+
             using (var reader = new StreamReader(filePath, Encoding.Default))
             {
                 string line;
@@ -43,6 +52,12 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
                 while ((line = reader.ReadLine()) != null)
                 {
                     lineNumber++;
+
+                    if (settings.Debug)
+                    {
+                        SendInformation?.Invoke(this, new ResultEventArgs { Message = $"Processing line {lineNumber} ({line})"});
+                    }
+
                     try
                     {
                         string[] data = new string[2];
@@ -58,6 +73,12 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
                             {
                                 data = parser.ReadFields();
                             }
+                        }
+
+                        if (settings.Debug)
+                        {
+                            SendInformation?.Invoke(this, new ResultEventArgs { Message = $"First data: {data[0]}" });
+                            SendInformation?.Invoke(this, new ResultEventArgs { Message = $"Second data: {data[1]}" });
                         }
 
                         Guid firstGuid = Guid.Empty;

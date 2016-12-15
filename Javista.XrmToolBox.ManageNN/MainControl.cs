@@ -181,6 +181,11 @@ namespace Javista.XrmToolBox.ManageNN
             listLog.Items.Add(e.Message);
         }
 
+        private void Ee_SendInformation(object sender, ExportResultEventArgs e)
+        {
+            AddItem(listLog, e.Message);
+        }
+
         private void ie_RaiseError(object sender, ResultEventArgs e)
         {
             AddItem(listLog, string.Format("Line '{0}' : Error! {1}", e.LineNumber, e.Message));
@@ -189,6 +194,11 @@ namespace Javista.XrmToolBox.ManageNN
         private void ie_RaiseSuccess(object sender, ResultEventArgs e)
         {
             AddItem(listLog, string.Format("Line '{0}' : Success!", e.LineNumber));
+        }
+
+        private void Ie_SendInformation(object sender, ResultEventArgs e)
+        {
+            AddItem(listLog, e.Message);
         }
 
         private void LoadMetadata()
@@ -311,7 +321,8 @@ namespace Javista.XrmToolBox.ManageNN
                 SecondEntity = ((EntityInfo)cbbSecondEntity.SelectedItem).Metadata.LogicalName,
                 SecondAttributeIsGuid = rdbSecondGuid.Checked,
                 SecondAttributeName = ((AttributeInfo)cbbSecondEntityAttribute.SelectedItem).Metadata.LogicalName,
-                Separator = tsddbSeparator.Tag.ToString()
+                Separator = tsddbSeparator.Tag.ToString(),
+                Debug = tsbDebug.Checked
             };
 
             WorkAsync(new WorkAsyncInfo
@@ -323,10 +334,18 @@ namespace Javista.XrmToolBox.ManageNN
                     var innerSettings = (ImportFileSettings)((object[])evt.Argument)[0];
                     var filePath = ((object[])evt.Argument)[1].ToString();
                     var ee = new ExportEngine(filePath, this.Service, innerSettings);
+                    ee.SendInformation += Ee_SendInformation;
                     ee.RaiseError += ee_RaiseError;
                     ee.Export();
                 },
-                PostWorkCallBack = evt => { }
+                PostWorkCallBack = evt =>
+                {
+                    if (evt.Error != null)
+                    {
+                        MessageBox.Show(this, $"An error occured during export: {evt.Error.Message}", "Error",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
             });
         }
 
@@ -346,7 +365,8 @@ namespace Javista.XrmToolBox.ManageNN
                 SecondEntity = ((EntityInfo)cbbSecondEntity.SelectedItem).Metadata.LogicalName,
                 SecondAttributeIsGuid = rdbSecondGuid.Checked,
                 SecondAttributeName = ((AttributeInfo)cbbSecondEntityAttribute.SelectedItem).Metadata.LogicalName,
-                Separator = tsddbSeparator.Tag.ToString()
+                Separator = tsddbSeparator.Tag.ToString(),
+                Debug = tsbDebug.Checked
             };
 
             WorkAsync(new WorkAsyncInfo
@@ -358,11 +378,19 @@ namespace Javista.XrmToolBox.ManageNN
                     var innerSettings = (ImportFileSettings)((object[])evt.Argument)[0];
                     var filePath = ((object[])evt.Argument)[1].ToString();
                     var ie = new ImportEngine(filePath, this.Service, innerSettings);
+                    ie.SendInformation += Ie_SendInformation;
                     ie.RaiseError += ie_RaiseError;
                     ie.RaiseSuccess += ie_RaiseSuccess;
                     ie.Import();
                 },
-                PostWorkCallBack = evt => { }
+                PostWorkCallBack = evt =>
+                {
+                    if (evt.Error != null)
+                    {
+                        MessageBox.Show(this, $"An error occured during import: {evt.Error.Message}", "Error",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
             });
         }
 
@@ -537,6 +565,11 @@ namespace Javista.XrmToolBox.ManageNN
 
             tsddbSeparator.Text = string.Format(text, value);
             tsddbSeparator.Tag = separator;
+        }
+
+        private void tsbDebug_CheckedChanged(object sender, EventArgs e)
+        {
+            ((ToolStripButton) sender).Text = ((ToolStripButton) sender).Text == "Debug : Off" ? "Debug : On" : "Debug : Off";
         }
     }
 }

@@ -28,6 +28,8 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
 
         public event EventHandler<ExportResultEventArgs> RaiseSuccess;
 
+        public event EventHandler<ExportResultEventArgs> SendInformation;
+
         public void Export()
         {
             var qe = new QueryExpression(settings.Relationship)
@@ -41,6 +43,9 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
             do
             {
                 results = service.RetrieveMultiple(qe);
+
+                SendInformation?.Invoke(this, new ExportResultEventArgs {Message = $"Parsing page {qe.PageInfo.PageNumber}..."});
+
                 using (var writer = new StreamWriter(filePath, true, Encoding.Default))
                 {
                     foreach (var result in results.Entities)

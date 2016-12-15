@@ -11,5 +11,6 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
         public string SecondAttributeName { get; set; }
         public string SecondEntity { get; set; }
         public string Separator { get; internal set; }
+        public bool Debug { get; set; }
     }
 }
