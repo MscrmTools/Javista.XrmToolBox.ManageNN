@@ -59,9 +59,7 @@ namespace Javista.XrmToolBox.ManageNN
             this.tsbLoadMetadata = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbImportNN = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbExport = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbDelete = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.tsddbSeparator = new System.Windows.Forms.ToolStripDropDownButton();
@@ -69,6 +67,8 @@ namespace Javista.XrmToolBox.ManageNN
             this.semicolonToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pipeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsbDebug = new System.Windows.Forms.ToolStripButton();
             this.gbFirst = new System.Windows.Forms.GroupBox();
             this.cbbFirstEntityAttribute = new System.Windows.Forms.ComboBox();
             this.rdbFirstAttribute = new System.Windows.Forms.RadioButton();
@@ -85,8 +85,10 @@ namespace Javista.XrmToolBox.ManageNN
             this.txtFilePath = new System.Windows.Forms.TextBox();
             this.gbLog = new System.Windows.Forms.GroupBox();
             this.listLog = new System.Windows.Forms.ListBox();
-            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
-            this.tsbDebug = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsbExportLogs = new System.Windows.Forms.ToolStripButton();
+            this.tslLogs = new System.Windows.Forms.ToolStripLabel();
+            this.tsbClearLogs = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.gbFirst.SuspendLayout();
             this.gbRelationship.SuspendLayout();
@@ -142,14 +144,16 @@ namespace Javista.XrmToolBox.ManageNN
             this.tsbLoadMetadata,
             this.toolStripSeparator1,
             this.tsbImportNN,
-            this.toolStripSeparator2,
             this.tsbExport,
-            this.toolStripSeparator4,
             this.tsbDelete,
             this.toolStripSeparator5,
             this.tsddbSeparator,
             this.toolStripSeparator6,
-            this.tsbDebug});
+            this.tsbDebug,
+            this.toolStripSeparator7,
+            this.tslLogs,
+            this.tsbExportLogs,
+            this.tsbClearLogs});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1080, 32);
@@ -158,10 +162,11 @@ namespace Javista.XrmToolBox.ManageNN
             // 
             // tsbClose
             // 
+            this.tsbClose.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.tsbClose.Image = ((System.Drawing.Image)(resources.GetObject("tsbClose.Image")));
             this.tsbClose.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbClose.Name = "tsbClose";
-            this.tsbClose.Size = new System.Drawing.Size(153, 29);
+            this.tsbClose.Size = new System.Drawing.Size(28, 29);
             this.tsbClose.Text = "Close this tool";
             this.tsbClose.Click += new System.EventHandler(this.tsbClose_Click);
             // 
@@ -195,26 +200,16 @@ namespace Javista.XrmToolBox.ManageNN
             this.tsbImportNN.ToolTipText = "Import NN relationships";
             this.tsbImportNN.Click += new System.EventHandler(this.tsbImportNN_Click);
             // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 32);
-            // 
             // tsbExport
             // 
             this.tsbExport.Enabled = false;
             this.tsbExport.Image = ((System.Drawing.Image)(resources.GetObject("tsbExport.Image")));
             this.tsbExport.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbExport.Name = "tsbExport";
-            this.tsbExport.Size = new System.Drawing.Size(91, 29);
+            this.tsbExport.Size = new System.Drawing.Size(83, 29);
             this.tsbExport.Text = "Export";
             this.tsbExport.ToolTipText = "Export NN relationships";
             this.tsbExport.Click += new System.EventHandler(this.tsbExport_Click);
-            // 
-            // toolStripSeparator4
-            // 
-            this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 32);
             // 
             // tsbDelete
             // 
@@ -222,7 +217,7 @@ namespace Javista.XrmToolBox.ManageNN
             this.tsbDelete.Image = ((System.Drawing.Image)(resources.GetObject("tsbDelete.Image")));
             this.tsbDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbDelete.Name = "tsbDelete";
-            this.tsbDelete.Size = new System.Drawing.Size(90, 29);
+            this.tsbDelete.Size = new System.Drawing.Size(82, 29);
             this.tsbDelete.Text = "Delete";
             this.tsbDelete.ToolTipText = "Delete NN relationships";
             this.tsbDelete.Click += new System.EventHandler(this.tsbDelete_Click);
@@ -275,6 +270,24 @@ namespace Javista.XrmToolBox.ManageNN
             this.tabToolStripMenuItem.Name = "tabToolStripMenuItem";
             this.tabToolStripMenuItem.Size = new System.Drawing.Size(199, 30);
             this.tabToolStripMenuItem.Text = "Tab";
+            // 
+            // toolStripSeparator6
+            // 
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 32);
+            // 
+            // tsbDebug
+            // 
+            this.tsbDebug.CheckOnClick = true;
+            this.tsbDebug.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsbDebug.Image = ((System.Drawing.Image)(resources.GetObject("tsbDebug.Image")));
+            this.tsbDebug.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbDebug.Name = "tsbDebug";
+            this.tsbDebug.Size = new System.Drawing.Size(110, 29);
+            this.tsbDebug.Text = "Debug : Off";
+            this.tsbDebug.ToolTipText = "Add additional information in the log\r\n\r\nUse only when the operation does not wor" +
+    "k as expected. It might impact performance.";
+            this.tsbDebug.CheckedChanged += new System.EventHandler(this.tsbDebug_CheckedChanged);
             // 
             // gbFirst
             // 
@@ -468,23 +481,35 @@ namespace Javista.XrmToolBox.ManageNN
             this.listLog.Size = new System.Drawing.Size(1059, 144);
             this.listLog.TabIndex = 0;
             // 
-            // toolStripSeparator6
+            // toolStripSeparator7
             // 
-            this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 32);
+            this.toolStripSeparator7.Name = "toolStripSeparator7";
+            this.toolStripSeparator7.Size = new System.Drawing.Size(6, 32);
             // 
-            // tsbDebug
+            // tsbExportLogs
             // 
-            this.tsbDebug.CheckOnClick = true;
-            this.tsbDebug.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.tsbDebug.Image = ((System.Drawing.Image)(resources.GetObject("tsbDebug.Image")));
-            this.tsbDebug.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbDebug.Name = "tsbDebug";
-            this.tsbDebug.Size = new System.Drawing.Size(110, 29);
-            this.tsbDebug.Text = "Debug : Off";
-            this.tsbDebug.ToolTipText = "Add additional information in the log\r\n\r\nUse only when the operation does not wor" +
-    "k as expected. It might impact performance.";
-            this.tsbDebug.CheckedChanged += new System.EventHandler(this.tsbDebug_CheckedChanged);
+            this.tsbExportLogs.Enabled = false;
+            this.tsbExportLogs.Image = ((System.Drawing.Image)(resources.GetObject("tsbExportLogs.Image")));
+            this.tsbExportLogs.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbExportLogs.Name = "tsbExportLogs";
+            this.tsbExportLogs.Size = new System.Drawing.Size(83, 29);
+            this.tsbExportLogs.Text = "Export";
+            this.tsbExportLogs.Click += new System.EventHandler(this.tsbExportLogs_Click);
+            // 
+            // tslLogs
+            // 
+            this.tslLogs.Name = "tslLogs";
+            this.tslLogs.Size = new System.Drawing.Size(59, 29);
+            this.tslLogs.Text = "Logs :";
+            // 
+            // tsbClearLogs
+            // 
+            this.tsbClearLogs.Image = ((System.Drawing.Image)(resources.GetObject("tsbClearLogs.Image")));
+            this.tsbClearLogs.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbClearLogs.Name = "tsbClearLogs";
+            this.tsbClearLogs.Size = new System.Drawing.Size(71, 29);
+            this.tsbClearLogs.Text = "Clear";
+            this.tsbClearLogs.Click += new System.EventHandler(this.tsbClearLogs_Click);
             // 
             // MainControl
             // 
@@ -510,12 +535,9 @@ namespace Javista.XrmToolBox.ManageNN
             this.PerformLayout();
 
         }
-
-        private ToolStripSeparator toolStripSeparator2;
         private ToolStripButton tsbExport;
         private ToolStripButton tsbClose;
         private ToolStripSeparator toolStripSeparator3;
-        private ToolStripSeparator toolStripSeparator4;
         private ToolStripButton tsbDelete;
         private ToolStripSeparator toolStripSeparator5;
         private ToolStripDropDownButton tsddbSeparator;
@@ -525,5 +547,9 @@ namespace Javista.XrmToolBox.ManageNN
         private ToolStripMenuItem tabToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator6;
         private ToolStripButton tsbDebug;
+        private ToolStripSeparator toolStripSeparator7;
+        private ToolStripButton tsbExportLogs;
+        private ToolStripLabel tslLogs;
+        private ToolStripButton tsbClearLogs;
     }
 }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  

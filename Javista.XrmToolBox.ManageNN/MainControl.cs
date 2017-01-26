@@ -3,7 +3,9 @@ using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using XrmToolBox.Extensibility;
@@ -44,11 +46,13 @@ namespace Javista.XrmToolBox.ManageNN
             }
         }
 
-        public static void AddItem(ListBox box, string item)
+        public static void AddItem(ListBox box, string item, ToolStripButton button)
         {
             MethodInvoker miAddItem = delegate
             {
                 box.Items.Add(item);
+
+                button.Enabled = true;
             };
 
             if (box.InvokeRequired)
@@ -183,22 +187,22 @@ namespace Javista.XrmToolBox.ManageNN
 
         private void Ee_SendInformation(object sender, ExportResultEventArgs e)
         {
-            AddItem(listLog, e.Message);
+            AddItem(listLog, e.Message, tsbExportLogs);
         }
 
         private void ie_RaiseError(object sender, ResultEventArgs e)
         {
-            AddItem(listLog, string.Format("Line '{0}' : Error! {1}", e.LineNumber, e.Message));
+            AddItem(listLog, string.Format("Line '{0}' : Error! {1}", e.LineNumber, e.Message), tsbExportLogs);
         }
 
         private void ie_RaiseSuccess(object sender, ResultEventArgs e)
         {
-            AddItem(listLog, string.Format("Line '{0}' : Success!", e.LineNumber));
+            AddItem(listLog, string.Format("Line '{0}' : Success!", e.LineNumber), tsbExportLogs);
         }
 
         private void Ie_SendInformation(object sender, ResultEventArgs e)
         {
-            AddItem(listLog, e.Message);
+            AddItem(listLog, e.Message, tsbExportLogs);
         }
 
         private void LoadMetadata()
@@ -577,6 +581,35 @@ namespace Javista.XrmToolBox.ManageNN
         private void tsbDebug_CheckedChanged(object sender, EventArgs e)
         {
             ((ToolStripButton) sender).Text = ((ToolStripButton) sender).Text == "Debug : Off" ? "Debug : On" : "Debug : Off";
+        }
+
+        private void tsbExportLogs_Click(object sender, EventArgs e)
+        {
+            var sfd = new SaveFileDialog
+            {
+                Filter = "Texte file|*.txt"
+            };
+
+            if (sfd.ShowDialog(this) == DialogResult.OK)
+            {
+                using (var writer = new StreamWriter(sfd.FileName, false))
+                {
+                    writer.WriteLine(string.Join(Environment.NewLine, listLog.Items.Cast<string>()));
+                }
+
+                var result = MessageBox.Show(this, "Export completed!\n\nDo you want to open the file now?", "Success",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                if (result == DialogResult.Yes)
+                {
+                    Process.Start(sfd.FileName);
+                }
+            }
+        }
+
+        private void tsbClearLogs_Click(object sender, EventArgs e)
+        {
+            listLog.Items.Clear();
+            tsbExportLogs.Enabled = false;
         }
     }
 }
