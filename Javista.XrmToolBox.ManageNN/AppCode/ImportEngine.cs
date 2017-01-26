@@ -60,6 +60,13 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
 
                     try
                     {
+                        if (!line.Contains(settings.Separator))
+                        {
+                            string message = $"The line does not contain the separator '{settings.Separator}'";
+                            OnRaiseError(new ResultEventArgs {LineNumber = lineNumber, Message = message});
+                            continue;
+                        }
+
                         string[] data = new string[2];
 
                         using (TextFieldParser parser = new TextFieldParser(new StringReader(line))
@@ -77,8 +84,8 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
 
                         if (settings.Debug)
                         {
-                            SendInformation?.Invoke(this, new ResultEventArgs { Message = $"First data: {data[0]}" });
-                            SendInformation?.Invoke(this, new ResultEventArgs { Message = $"Second data: {data[1]}" });
+                            SendInformation?.Invoke(this, new ResultEventArgs {Message = $"First data: {data[0]}"});
+                            SendInformation?.Invoke(this, new ResultEventArgs {Message = $"Second data: {data[1]}"});
                         }
 
                         Guid firstGuid = Guid.Empty;
@@ -112,7 +119,10 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
                                     new ResultEventArgs
                                     {
                                         LineNumber = lineNumber,
-                                        Message = string.Format("More than one record ({0}) were found with the value specified", settings.FirstEntity)
+                                        Message =
+                                            string.Format(
+                                                "More than one record ({0}) were found with the value specified",
+                                                settings.FirstEntity)
                                     });
 
                                 continue;
@@ -123,7 +133,9 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
                                     new ResultEventArgs
                                     {
                                         LineNumber = lineNumber,
-                                        Message = string.Format("No record ({0}) was found with the value specified", settings.FirstEntity)
+                                        Message =
+                                            string.Format("No record ({0}) was found with the value specified",
+                                                settings.FirstEntity)
                                     });
 
                                 continue;
@@ -158,7 +170,10 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
                                     new ResultEventArgs
                                     {
                                         LineNumber = lineNumber,
-                                        Message = string.Format("More than one record ({0}) were found with the value specified", settings.SecondEntity)
+                                        Message =
+                                            string.Format(
+                                                "More than one record ({0}) were found with the value specified",
+                                                settings.SecondEntity)
                                     });
 
                                 continue;
@@ -169,7 +184,9 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
                                     new ResultEventArgs
                                     {
                                         LineNumber = lineNumber,
-                                        Message = string.Format("No record ({0}) was found with the value specified", settings.SecondEntity)
+                                        Message =
+                                            string.Format("No record ({0}) was found with the value specified",
+                                                settings.SecondEntity)
                                     });
 
                                 continue;
@@ -183,7 +200,7 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
                             var request = new AddListMembersListRequest
                             {
                                 ListId = settings.FirstEntity == "list" ? firstGuid : secondGuid,
-                                MemberIds = new[] { settings.FirstEntity == "list" ? secondGuid : firstGuid }
+                                MemberIds = new[] {settings.FirstEntity == "list" ? secondGuid : firstGuid}
                             };
 
                             service.Execute(request);
@@ -208,17 +225,21 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
                             service.Execute(request);
                         }
 
-                        OnRaiseSuccess(new ResultEventArgs { LineNumber = lineNumber });
+                        OnRaiseSuccess(new ResultEventArgs {LineNumber = lineNumber});
                     }
                     catch (FaultException<OrganizationServiceFault> error)
                     {
                         if (error.Detail.ErrorCode.ToString("X") == "80040237")
                         {
-                            OnRaiseError(new ResultEventArgs { LineNumber = lineNumber, Message = "Relationship was not created because it already exists" });
+                            OnRaiseError(new ResultEventArgs
+                            {
+                                LineNumber = lineNumber,
+                                Message = "Relationship was not created because it already exists"
+                            });
                         }
                         else
                         {
-                            OnRaiseError(new ResultEventArgs { LineNumber = lineNumber, Message = error.Message });
+                            OnRaiseError(new ResultEventArgs {LineNumber = lineNumber, Message = error.Message});
                         }
                     }
                 }
