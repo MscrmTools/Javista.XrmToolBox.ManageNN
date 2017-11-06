@@ -44,7 +44,7 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
             {
                 results = service.RetrieveMultiple(qe);
 
-                SendInformation?.Invoke(this, new ExportResultEventArgs {Message = $"Parsing page {qe.PageInfo.PageNumber}..."});
+                SendInformation?.Invoke(this, new ExportResultEventArgs { Message = $"Parsing page {qe.PageInfo.PageNumber}..." });
 
                 using (var writer = new StreamWriter(filePath, true, Encoding.Default))
                 {
@@ -140,6 +140,7 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
                 }
 
                 qe.PageInfo.PageNumber++;
+                qe.PageInfo.PagingCookie = results.PagingCookie;
             } while (results.MoreRecords);
         }
 
