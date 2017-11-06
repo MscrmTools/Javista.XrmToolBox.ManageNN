@@ -40,7 +40,7 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
         {
             if (!File.Exists(filePath))
             {
-                SendInformation?.Invoke(this,new ResultEventArgs {Message = $"File '{filePath}' does not exist"});
+                SendInformation?.Invoke(this, new ResultEventArgs { Message = $"File '{filePath}' does not exist" });
             }
 
             SendInformation?.Invoke(this, new ResultEventArgs { Message = $"Separator is '{settings.Separator}'" });
@@ -55,7 +55,7 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
 
                     if (settings.Debug)
                     {
-                        SendInformation?.Invoke(this, new ResultEventArgs { Message = $"Processing line {lineNumber} ({line})"});
+                        SendInformation?.Invoke(this, new ResultEventArgs { Message = $"Processing line {lineNumber} ({line})" });
                     }
 
                     try
@@ -63,7 +63,7 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
                         if (!line.Contains(settings.Separator))
                         {
                             string message = $"The line does not contain the separator '{settings.Separator}'";
-                            OnRaiseError(new ResultEventArgs {LineNumber = lineNumber, Message = message});
+                            OnRaiseError(new ResultEventArgs { LineNumber = lineNumber, Message = message });
                             continue;
                         }
 
@@ -84,8 +84,8 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
 
                         if (settings.Debug)
                         {
-                            SendInformation?.Invoke(this, new ResultEventArgs {Message = $"First data: {data[0]}"});
-                            SendInformation?.Invoke(this, new ResultEventArgs {Message = $"Second data: {data[1]}"});
+                            SendInformation?.Invoke(this, new ResultEventArgs { Message = $"First data: {data[0]}" });
+                            SendInformation?.Invoke(this, new ResultEventArgs { Message = $"Second data: {data[1]}" });
                         }
 
                         Guid firstGuid = Guid.Empty;
@@ -200,7 +200,7 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
                             var request = new AddListMembersListRequest
                             {
                                 ListId = settings.FirstEntity == "list" ? firstGuid : secondGuid,
-                                MemberIds = new[] {settings.FirstEntity == "list" ? secondGuid : firstGuid}
+                                MemberIds = new[] { settings.FirstEntity == "list" ? secondGuid : firstGuid }
                             };
 
                             service.Execute(request);
@@ -219,13 +219,13 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
 
                             if (request.Target.LogicalName == request.RelatedEntities.First().LogicalName)
                             {
-                                request.Relationship.PrimaryEntityRole = EntityRole.Referenced;
+                                request.Relationship.PrimaryEntityRole = EntityRole.Referencing;
                             }
 
                             service.Execute(request);
                         }
 
-                        OnRaiseSuccess(new ResultEventArgs {LineNumber = lineNumber});
+                        OnRaiseSuccess(new ResultEventArgs { LineNumber = lineNumber });
                     }
                     catch (FaultException<OrganizationServiceFault> error)
                     {
@@ -239,7 +239,7 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
                         }
                         else
                         {
-                            OnRaiseError(new ResultEventArgs {LineNumber = lineNumber, Message = error.Message});
+                            OnRaiseError(new ResultEventArgs { LineNumber = lineNumber, Message = error.Message });
                         }
                     }
                 }

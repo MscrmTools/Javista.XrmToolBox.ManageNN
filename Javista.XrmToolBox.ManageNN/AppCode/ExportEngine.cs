@@ -71,6 +71,11 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
                                 guidFirst = result.GetAttributeValue<EntityReference>("entityid").Id;
                                 guidSecond = result.GetAttributeValue<EntityReference>("listid").Id;
                             }
+                            else if (settings.FirstEntity == settings.SecondEntity)
+                            {
+                                guidFirst = result.GetAttributeValue<Guid>(settings.FirstEntity + "idone");
+                                guidSecond = result.GetAttributeValue<Guid>(settings.SecondEntity + "idtwo");
+                            }
                             else
                             {
                                 guidFirst = result.GetAttributeValue<Guid>(settings.FirstEntity + "id");
