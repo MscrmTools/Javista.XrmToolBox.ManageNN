@@ -139,7 +139,7 @@ namespace Javista.XrmToolBox.ManageNN
             {
                 Metadata = emds.First(ent => (ent.LogicalName == rel.Entity1LogicalName && rel.Entity1LogicalName != ((EntityInfo)cbbFirstEntity.SelectedItem).Metadata.LogicalName)
                 || (ent.LogicalName == rel.Entity2LogicalName && rel.Entity2LogicalName != ((EntityInfo)cbbFirstEntity.SelectedItem).Metadata.LogicalName)
-                || (ent.LogicalName == rel.Entity2LogicalName && rel.Entity2LogicalName == ((EntityInfo)cbbFirstEntity.SelectedItem).Metadata.LogicalName))
+                || (rel.Entity1LogicalName == rel.Entity2LogicalName && ent.LogicalName == rel.Entity2LogicalName && rel.Entity2LogicalName == ((EntityInfo)cbbFirstEntity.SelectedItem).Metadata.LogicalName))
             });
 
             if (cbbSecondEntity.Items.Count > 0)
@@ -580,7 +580,7 @@ namespace Javista.XrmToolBox.ManageNN
 
         private void tsbDebug_CheckedChanged(object sender, EventArgs e)
         {
-            ((ToolStripButton) sender).Text = ((ToolStripButton) sender).Text == "Debug : Off" ? "Debug : On" : "Debug : Off";
+            ((ToolStripButton)sender).Text = ((ToolStripButton)sender).Text == "Debug : Off" ? "Debug : On" : "Debug : Off";
         }
 
         private void tsbExportLogs_Click(object sender, EventArgs e)
