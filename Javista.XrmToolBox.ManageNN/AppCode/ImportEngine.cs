@@ -45,6 +45,21 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
 
             SendInformation?.Invoke(this, new ResultEventArgs { Message = $"Separator is '{settings.Separator}'" });
 
+            if (settings.Relationship == "systemuserroles_association"
+                || settings.Relationship == "teamroles_association")
+            {
+                if (settings.FirstEntity == "role" && settings.FirstAttributeIsGuid
+                    || settings.SecondEntity == "role" && settings.SecondAttributeIsGuid)
+                {
+                    string message = "To associate roles, you must use role name, not role unique identifier";
+                    OnRaiseError(new ResultEventArgs { Message = message });
+                    return;
+                }
+
+                ManageRoleAssociation();
+                return;
+            }
+
             using (var reader = new StreamReader(filePath, Encoding.Default))
             {
                 string line;
@@ -224,6 +239,173 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
 
                             service.Execute(request);
                         }
+
+                        OnRaiseSuccess(new ResultEventArgs { LineNumber = lineNumber });
+                    }
+                    catch (FaultException<OrganizationServiceFault> error)
+                    {
+                        if (error.Detail.ErrorCode.ToString("X") == "80040237")
+                        {
+                            OnRaiseError(new ResultEventArgs
+                            {
+                                LineNumber = lineNumber,
+                                Message = "Relationship was not created because it already exists"
+                            });
+                        }
+                        else
+                        {
+                            OnRaiseError(new ResultEventArgs { LineNumber = lineNumber, Message = error.Message });
+                        }
+                    }
+                }
+            }
+        }
+
+        public void ManageRoleAssociation()
+        {
+            using (var reader = new StreamReader(filePath, Encoding.Default))
+            {
+                string line;
+                int lineNumber = 0;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    lineNumber++;
+
+                    if (settings.Debug)
+                    {
+                        SendInformation?.Invoke(this, new ResultEventArgs { Message = $"Processing line {lineNumber} ({line})" });
+                    }
+
+                    try
+                    {
+                        if (!line.Contains(settings.Separator))
+                        {
+                            string message = $"The line does not contain the separator '{settings.Separator}'";
+                            OnRaiseError(new ResultEventArgs { LineNumber = lineNumber, Message = message });
+                            continue;
+                        }
+
+                        string[] data = new string[2];
+
+                        using (TextFieldParser parser = new TextFieldParser(new StringReader(line))
+                        {
+                            HasFieldsEnclosedInQuotes = true
+                        })
+                        {
+                            parser.SetDelimiters(settings.Separator);
+
+                            while (!parser.EndOfData)
+                            {
+                                data = parser.ReadFields();
+                            }
+                        }
+
+                        if (settings.Debug)
+                        {
+                            SendInformation?.Invoke(this, new ResultEventArgs { Message = $"First data: {data[0]}" });
+                            SendInformation?.Invoke(this, new ResultEventArgs { Message = $"Second data: {data[1]}" });
+                        }
+
+                        EntityReference buRef;
+                        Entity principal;
+
+                        if (settings.Relationship == "systemuserroles_association")
+                        {
+                            principal = service.RetrieveMultiple(new QueryExpression("systemuser")
+                            {
+                                ColumnSet = new ColumnSet("businessunitid"),
+                                Criteria =
+                                {
+                                    Conditions =
+                                    {
+                                        new ConditionExpression(
+                                            settings.FirstEntity == "systemuser"
+                                                ? settings.FirstAttributeName
+                                                : settings.SecondAttributeName, ConditionOperator.Equal,
+                                            settings.FirstEntity == "systemuser" ? data[0] : data[1])
+                                    }
+                                }
+                            }).Entities.FirstOrDefault();
+
+                            if (principal == null)
+                            {
+                                OnRaiseError(new ResultEventArgs
+                                {
+                                    LineNumber = lineNumber,
+                                    Message =
+                                        $"Unable to find a user with value {(settings.FirstEntity == "systemuser" ? data[0] : data[1])} for attribute {(settings.FirstEntity == "systemuser" ? settings.FirstAttributeName : settings.SecondAttributeName)}"
+                                });
+                                continue;
+                            }
+
+                            buRef = principal.GetAttributeValue<EntityReference>("businessunitid");
+                        }
+                        else
+                        {
+                            principal = service.RetrieveMultiple(new QueryExpression("team")
+                            {
+                                ColumnSet = new ColumnSet("businessunitid"),
+                                Criteria =
+                                {
+                                    Conditions =
+                                    {
+                                        new ConditionExpression(
+                                            settings.FirstEntity == "team"
+                                                ? settings.FirstAttributeName
+                                                : settings.SecondAttributeName, ConditionOperator.Equal,
+                                            settings.FirstEntity == "team" ? data[0] : data[1])
+                                    }
+                                }
+                            }).Entities.FirstOrDefault();
+
+                            if (principal == null)
+                            {
+                                OnRaiseError(new ResultEventArgs
+                                {
+                                    LineNumber = lineNumber,
+                                    Message =
+                                        $"Unable to find a team with value {(settings.FirstEntity == "team" ? data[0] : data[1])} for attribute {(settings.FirstEntity == "team" ? settings.FirstAttributeName : settings.SecondAttributeName)}"
+                                });
+                                continue;
+                            }
+
+                            buRef = principal.GetAttributeValue<EntityReference>("businessunitid");
+                        }
+
+                        var role = service.RetrieveMultiple(new QueryExpression("role")
+                        {
+                            Criteria =
+                            {
+                                Conditions =
+                                {
+                                    new ConditionExpression(settings.FirstEntity == "role"?settings.FirstAttributeName : settings.SecondAttributeName, ConditionOperator.Equal,
+                                        settings.FirstEntity == "role"?data[0]:data[1]),
+                                    new ConditionExpression("businessunitid", ConditionOperator.Equal, buRef.Id)
+                                }
+                            }
+                        }).Entities.FirstOrDefault();
+
+                        if (role == null)
+                        {
+                            OnRaiseError(new ResultEventArgs
+                            {
+                                LineNumber = lineNumber,
+                                Message = $"Unable to find a role with value {(settings.FirstEntity == "role" ? data[0] : data[1])} for attribute {(settings.FirstEntity == "role" ? settings.FirstAttributeName : settings.SecondAttributeName)} and business unit {buRef.Name}"
+                            });
+                            continue;
+                        }
+
+                        var request = new AssociateRequest
+                        {
+                            Target = new EntityReference(principal.LogicalName, principal.Id),
+                            Relationship = new Relationship(settings.Relationship),
+                            RelatedEntities = new EntityReferenceCollection
+                                {
+                                    new EntityReference(role.LogicalName, role.Id)
+                                }
+                        };
+
+                        service.Execute(request);
 
                         OnRaiseSuccess(new ResultEventArgs { LineNumber = lineNumber });
                     }

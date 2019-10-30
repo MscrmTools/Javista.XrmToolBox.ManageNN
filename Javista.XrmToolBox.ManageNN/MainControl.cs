@@ -265,9 +265,20 @@ namespace Javista.XrmToolBox.ManageNN
             cbbSecondEntityAttribute.Enabled = rdbSecondAttribute.Checked;
         }
 
+        private void tsbClearLogs_Click(object sender, EventArgs e)
+        {
+            listLog.Items.Clear();
+            tsbExportLogs.Enabled = false;
+        }
+
         private void tsbClose_Click(object sender, EventArgs e)
         {
             CloseTool();
+        }
+
+        private void tsbDebug_CheckedChanged(object sender, EventArgs e)
+        {
+            ((ToolStripButton)sender).Text = ((ToolStripButton)sender).Text == "Debug : Off" ? "Debug : On" : "Debug : Off";
         }
 
         private void tsbDelete_Click(object sender, EventArgs e)
@@ -360,6 +371,29 @@ namespace Javista.XrmToolBox.ManageNN
             });
         }
 
+        private void tsbExportLogs_Click(object sender, EventArgs e)
+        {
+            var sfd = new SaveFileDialog
+            {
+                Filter = "Texte file|*.txt"
+            };
+
+            if (sfd.ShowDialog(this) == DialogResult.OK)
+            {
+                using (var writer = new StreamWriter(sfd.FileName, false))
+                {
+                    writer.WriteLine(string.Join(Environment.NewLine, listLog.Items.Cast<string>()));
+                }
+
+                var result = MessageBox.Show(this, "Export completed!\n\nDo you want to open the file now?", "Success",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                if (result == DialogResult.Yes)
+                {
+                    Process.Start(sfd.FileName);
+                }
+            }
+        }
+
         private void tsbImportNN_Click(object sender, EventArgs e)
         {
             if (txtFilePath.Text.Length == 0)
@@ -371,11 +405,11 @@ namespace Javista.XrmToolBox.ManageNN
             {
                 FirstEntity = ((EntityInfo)cbbFirstEntity.SelectedItem).Metadata.LogicalName,
                 FirstAttributeIsGuid = rdbFirstGuid.Checked,
-                FirstAttributeName = ((AttributeInfo)cbbFirstEntityAttribute.SelectedItem).Metadata.LogicalName,
+                FirstAttributeName = rdbFirstGuid.Checked ? ((EntityInfo)cbbFirstEntity.SelectedItem).Metadata.PrimaryIdAttribute : ((AttributeInfo)cbbFirstEntityAttribute.SelectedItem).Metadata.LogicalName,
                 Relationship = ((RelationshipInfo)cbbRelationship.SelectedItem).Metadata.SchemaName,
                 SecondEntity = ((EntityInfo)cbbSecondEntity.SelectedItem).Metadata.LogicalName,
                 SecondAttributeIsGuid = rdbSecondGuid.Checked,
-                SecondAttributeName = ((AttributeInfo)cbbSecondEntityAttribute.SelectedItem).Metadata.LogicalName,
+                SecondAttributeName = rdbSecondGuid.Checked ? ((EntityInfo)cbbSecondEntity.SelectedItem).Metadata.PrimaryIdAttribute : ((AttributeInfo)cbbSecondEntityAttribute.SelectedItem).Metadata.LogicalName,
                 Separator = tsddbSeparator.Tag.ToString(),
                 Debug = tsbDebug.Checked
             };
@@ -576,40 +610,6 @@ namespace Javista.XrmToolBox.ManageNN
 
             tsddbSeparator.Text = string.Format(text, value);
             tsddbSeparator.Tag = separator;
-        }
-
-        private void tsbDebug_CheckedChanged(object sender, EventArgs e)
-        {
-            ((ToolStripButton)sender).Text = ((ToolStripButton)sender).Text == "Debug : Off" ? "Debug : On" : "Debug : Off";
-        }
-
-        private void tsbExportLogs_Click(object sender, EventArgs e)
-        {
-            var sfd = new SaveFileDialog
-            {
-                Filter = "Texte file|*.txt"
-            };
-
-            if (sfd.ShowDialog(this) == DialogResult.OK)
-            {
-                using (var writer = new StreamWriter(sfd.FileName, false))
-                {
-                    writer.WriteLine(string.Join(Environment.NewLine, listLog.Items.Cast<string>()));
-                }
-
-                var result = MessageBox.Show(this, "Export completed!\n\nDo you want to open the file now?", "Success",
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-                if (result == DialogResult.Yes)
-                {
-                    Process.Start(sfd.FileName);
-                }
-            }
-        }
-
-        private void tsbClearLogs_Click(object sender, EventArgs e)
-        {
-            listLog.Items.Clear();
-            tsbExportLogs.Enabled = false;
         }
     }
 }
