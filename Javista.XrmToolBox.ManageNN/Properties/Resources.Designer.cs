@@ -59,5 +59,15 @@ namespace Javista.XrmToolBox.ImportNN.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap control_stop {
+            get {
+                object obj = ResourceManager.GetObject("control_stop", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }

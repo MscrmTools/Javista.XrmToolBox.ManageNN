@@ -4,6 +4,8 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.ServiceModel;
@@ -13,21 +15,30 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
 {
     public class ResultEventArgs : EventArgs
     {
+        public string FirstValue;
         public int LineNumber;
         public string Message;
+        public string SecondValue;
+        public bool? Success;
     }
 
     internal class ImportEngine
     {
         private readonly string filePath;
+        private readonly bool isDelete;
         private readonly IOrganizationService service;
         private readonly ImportFileSettings settings;
+        private List<string[]> dataList;
+        private List<string> lines;
 
-        public ImportEngine(string filePath, IOrganizationService service, ImportFileSettings settings)
+        public ImportEngine(string filePath, IOrganizationService service, ImportFileSettings settings, bool isDelete = false)
         {
             this.filePath = filePath;
             this.service = service;
             this.settings = settings;
+            this.isDelete = isDelete;
+            lines = new List<string>();
+            dataList = new List<string[]>();
         }
 
         public event EventHandler<ResultEventArgs> RaiseError;
@@ -36,14 +47,21 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
 
         public event EventHandler<ResultEventArgs> SendInformation;
 
-        public void Import()
+        public void Import(BackgroundWorker bw)
         {
-            if (!File.Exists(filePath))
-            {
-                SendInformation?.Invoke(this, new ResultEventArgs { Message = $"File '{filePath}' does not exist" });
-            }
+            int processed = 0;
 
-            SendInformation?.Invoke(this, new ResultEventArgs { Message = $"Separator is '{settings.Separator}'" });
+            var firstRecords = new List<Entity>();
+            var secondRecords = new List<Entity>();
+            var batch = new ExecuteMultipleRequest
+            {
+                Requests = new OrganizationRequestCollection(),
+                Settings = new ExecuteMultipleSettings
+                {
+                    ContinueOnError = true,
+                    ReturnResponses = true
+                }
+            };
 
             if (settings.Relationship == "systemuserroles_association"
                 || settings.Relationship == "teamroles_association")
@@ -60,68 +78,95 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
                 return;
             }
 
-            using (var reader = new StreamReader(filePath, Encoding.Default))
+            if (settings.CacheFirstEntity)
             {
-                string line;
-                int lineNumber = 0;
-                while ((line = reader.ReadLine()) != null)
+                SendInformation?.Invoke(this, new ResultEventArgs { Message = $"Caching info for entity '{settings.FirstEntity}'" });
+
+                GetRecords(settings.FirstEntity, settings.FirstAttributeName, firstRecords);
+
+                SendInformation?.Invoke(this, new ResultEventArgs { Message = $"{firstRecords.Count} recods cached" });
+            }
+
+            if (settings.CacheSecondEntity)
+            {
+                SendInformation?.Invoke(this, new ResultEventArgs { Message = $"Caching info for entity '{settings.SecondEntity}'" });
+
+                GetRecords(settings.SecondEntity, settings.SecondAttributeName, secondRecords);
+
+                SendInformation?.Invoke(this, new ResultEventArgs { Message = $"{secondRecords.Count} recods cached" });
+            }
+
+            int lineNumber = 0;
+            foreach (var line in lines)
+            {
+                if (bw.CancellationPending)
                 {
-                    lineNumber++;
+                    return;
+                }
+                lineNumber++;
+
+                if (settings.Debug)
+                {
+                    SendInformation?.Invoke(this, new ResultEventArgs { Message = $"Processing line {lineNumber} ({line})" });
+                }
+                string[] data = new string[2];
+
+                try
+                {
+                    if (!line.Contains(settings.Separator))
+                    {
+                        string message = $"The line does not contain the separator '{settings.Separator}'";
+                        OnRaiseError(new ResultEventArgs { Success = false, LineNumber = lineNumber, Message = message });
+                        continue;
+                    }
+
+                    using (TextFieldParser parser = new TextFieldParser(new StringReader(line))
+                    {
+                        HasFieldsEnclosedInQuotes = true
+                    })
+                    {
+                        parser.SetDelimiters(settings.Separator);
+
+                        while (!parser.EndOfData)
+                        {
+                            data = parser.ReadFields();
+                        }
+                    }
+
+                    dataList.Add(data);
 
                     if (settings.Debug)
                     {
-                        SendInformation?.Invoke(this, new ResultEventArgs { Message = $"Processing line {lineNumber} ({line})" });
+                        SendInformation?.Invoke(this, new ResultEventArgs { Message = $"First data: {data[0]}" });
+                        SendInformation?.Invoke(this, new ResultEventArgs { Message = $"Second data: {data[1]}" });
                     }
 
-                    try
+                    Guid firstGuid, secondGuid;
+
+                    if (settings.FirstAttributeIsGuid)
                     {
-                        if (!line.Contains(settings.Separator))
-                        {
-                            string message = $"The line does not contain the separator '{settings.Separator}'";
-                            OnRaiseError(new ResultEventArgs { LineNumber = lineNumber, Message = message });
-                            continue;
-                        }
+                        firstGuid = new Guid(data[0]);
+                    }
+                    else
+                    {
+                        firstGuid = firstRecords.FirstOrDefault(r =>
+                                        r.GetAttributeValue<string>(settings.FirstAttributeName) == data[0])?.Id ??
+                                    Guid.Empty;
 
-                        string[] data = new string[2];
-
-                        using (TextFieldParser parser = new TextFieldParser(new StringReader(line))
-                        {
-                            HasFieldsEnclosedInQuotes = true
-                        })
-                        {
-                            parser.SetDelimiters(settings.Separator);
-
-                            while (!parser.EndOfData)
-                            {
-                                data = parser.ReadFields();
-                            }
-                        }
-
-                        if (settings.Debug)
-                        {
-                            SendInformation?.Invoke(this, new ResultEventArgs { Message = $"First data: {data[0]}" });
-                            SendInformation?.Invoke(this, new ResultEventArgs { Message = $"Second data: {data[1]}" });
-                        }
-
-                        Guid firstGuid = Guid.Empty;
-                        Guid secondGuid = Guid.Empty;
-
-                        if (settings.FirstAttributeIsGuid)
-                        {
-                            firstGuid = new Guid(data[0]);
-                        }
-                        else
+                        if (firstGuid == Guid.Empty)
                         {
                             var records = service.RetrieveMultiple(new QueryExpression(settings.FirstEntity)
                             {
+                                TopCount = 2,
                                 Criteria =
-                                {
-                                    Conditions =
                                     {
-                                        new ConditionExpression(settings.FirstAttributeName, ConditionOperator.Equal,
-                                            data[0])
+                                        Conditions =
+                                        {
+                                            new ConditionExpression(settings.FirstAttributeName,
+                                                ConditionOperator.Equal,
+                                                data[0])
+                                        }
                                     }
-                                }
                             });
 
                             if (records.Entities.Count == 1)
@@ -134,10 +179,11 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
                                     new ResultEventArgs
                                     {
                                         LineNumber = lineNumber,
+                                        FirstValue = data[0],
+                                        SecondValue = data[1],
+                                        Success = false,
                                         Message =
-                                            string.Format(
-                                                "More than one record ({0}) were found with the value specified",
-                                                settings.FirstEntity)
+                                            $"More than one record ({settings.FirstEntity}) were found with the value specified"
                                     });
 
                                 continue;
@@ -147,32 +193,43 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
                                 RaiseError(this,
                                     new ResultEventArgs
                                     {
+                                        FirstValue = data[0],
+                                        SecondValue = data[1],
+                                        Success = false,
                                         LineNumber = lineNumber,
                                         Message =
-                                            string.Format("No record ({0}) was found with the value specified",
-                                                settings.FirstEntity)
+                                            $"No record ({settings.FirstEntity}) was found with the value specified"
                                     });
 
                                 continue;
                             }
                         }
+                    }
 
-                        if (settings.SecondAttributeIsGuid)
-                        {
-                            secondGuid = new Guid(data[1]);
-                        }
-                        else
+                    if (settings.SecondAttributeIsGuid)
+                    {
+                        secondGuid = new Guid(data[1]);
+                    }
+                    else
+                    {
+                        secondGuid = secondRecords.FirstOrDefault(r =>
+                                        r.GetAttributeValue<string>(settings.SecondAttributeName) == data[0])?.Id ??
+                                    Guid.Empty;
+
+                        if (secondGuid == Guid.Empty)
                         {
                             var records = service.RetrieveMultiple(new QueryExpression(settings.SecondEntity)
                             {
+                                TopCount = 2,
                                 Criteria =
-                                {
-                                    Conditions =
                                     {
-                                        new ConditionExpression(settings.SecondAttributeName, ConditionOperator.Equal,
-                                            data[1])
+                                        Conditions =
+                                        {
+                                            new ConditionExpression(settings.SecondAttributeName,
+                                                ConditionOperator.Equal,
+                                                data[1])
+                                        }
                                     }
-                                }
                             });
 
                             if (records.Entities.Count == 1)
@@ -185,10 +242,11 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
                                     new ResultEventArgs
                                     {
                                         LineNumber = lineNumber,
+                                        FirstValue = data[0],
+                                        SecondValue = data[1],
+                                        Success = false,
                                         Message =
-                                            string.Format(
-                                                "More than one record ({0}) were found with the value specified",
-                                                settings.SecondEntity)
+                                            $"More than one record ({settings.SecondEntity}) were found with the value specified"
                                     });
 
                                 continue;
@@ -199,30 +257,42 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
                                     new ResultEventArgs
                                     {
                                         LineNumber = lineNumber,
+                                        FirstValue = data[0],
+                                        SecondValue = data[1],
+                                        Success = false,
                                         Message =
-                                            string.Format("No record ({0}) was found with the value specified",
-                                                settings.SecondEntity)
+                                            $"No record ({settings.SecondEntity}) was found with the value specified"
                                     });
 
                                 continue;
                             }
                         }
+                    }
 
-                        if (settings.Relationship == "listcontact_association"
-                            || settings.Relationship == "listaccount_association"
-                            || settings.Relationship == "listlead_association")
+                    if (settings.Relationship == "listcontact_association"
+                        || settings.Relationship == "listaccount_association"
+                        || settings.Relationship == "listlead_association")
+                    {
+                        var request = new AddListMembersListRequest
                         {
-                            var request = new AddListMembersListRequest
-                            {
-                                ListId = settings.FirstEntity == "list" ? firstGuid : secondGuid,
-                                MemberIds = new[] { settings.FirstEntity == "list" ? secondGuid : firstGuid }
-                            };
+                            ListId = settings.FirstEntity == "list" ? firstGuid : secondGuid,
+                            MemberIds = new[] { settings.FirstEntity == "list" ? secondGuid : firstGuid }
+                        };
 
+                        if (!settings.ImportInBatch)
                             service.Execute(request);
-                        }
                         else
                         {
-                            var request = new AssociateRequest
+                            batch.Requests.Add(request);
+                        }
+                    }
+                    else
+                    {
+                        OrganizationRequest request;
+
+                        if (isDelete)
+                        {
+                            request = new DisassociateRequest
                             {
                                 Target = new EntityReference(settings.FirstEntity, firstGuid),
                                 Relationship = new Relationship(settings.Relationship),
@@ -232,37 +302,198 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
                                 }
                             };
 
-                            if (request.Target.LogicalName == request.RelatedEntities.First().LogicalName)
+                            if (((DisassociateRequest)request).Target.LogicalName == ((DisassociateRequest)request).RelatedEntities.First().LogicalName)
                             {
-                                request.Relationship.PrimaryEntityRole = EntityRole.Referencing;
+                                ((DisassociateRequest)request).Relationship.PrimaryEntityRole = EntityRole.Referencing;
                             }
+                        }
+                        else
+                        {
+                            request = new AssociateRequest
+                            {
+                                Target = new EntityReference(settings.FirstEntity, firstGuid),
+                                Relationship = new Relationship(settings.Relationship),
+                                RelatedEntities = new EntityReferenceCollection
+                                {
+                                    new EntityReference(settings.SecondEntity, secondGuid)
+                                }
+                            };
 
-                            service.Execute(request);
+                            if (((AssociateRequest)request).Target.LogicalName == ((AssociateRequest)request).RelatedEntities.First().LogicalName)
+                            {
+                                ((AssociateRequest)request).Relationship.PrimaryEntityRole = EntityRole.Referencing;
+                            }
                         }
 
-                        OnRaiseSuccess(new ResultEventArgs { LineNumber = lineNumber });
+                        if (!settings.ImportInBatch)
+                        {
+                            service.Execute(request);
+                            OnRaiseSuccess(new ResultEventArgs
+                            {
+                                LineNumber = lineNumber,
+                                FirstValue = data[0],
+                                SecondValue = data[1],
+                                Success = true,
+                            });
+                        }
+                        else
+                        {
+                            batch.Requests.Add(request);
+                        }
                     }
-                    catch (FaultException<OrganizationServiceFault> error)
+                }
+                catch (FaultException<OrganizationServiceFault> error)
+                {
+                    if (error.Detail.ErrorCode.ToString("X") == "80040237")
                     {
-                        if (error.Detail.ErrorCode.ToString("X") == "80040237")
+                        OnRaiseError(new ResultEventArgs
+                        {
+                            LineNumber = lineNumber,
+                            FirstValue = data[0],
+                            SecondValue = data[1],
+                            Success = false,
+                            Message = "Relationship was not created because it already exists"
+                        });
+                    }
+                    else
+                    {
+                        OnRaiseError(new ResultEventArgs
+                        {
+                            LineNumber = lineNumber,
+                            FirstValue = data[0],
+                            SecondValue = data[1],
+                            Success = false,
+                            Message = error.Message
+                        });
+                    }
+                }
+
+                if (settings.ImportInBatch && batch.Requests.Count % settings.BatchCount == 0)
+                {
+                    var batchResponse = (ExecuteMultipleResponse)service.Execute(batch);
+                    foreach (var response in batchResponse.Responses)
+                    {
+                        var totalLineNumber = processed + response.RequestIndex + 1;
+                        if (response.Fault == null)
+                        {
+                            OnRaiseSuccess(new ResultEventArgs
+                            {
+                                LineNumber = totalLineNumber,
+                                FirstValue = dataList[processed + response.RequestIndex][0],
+                                SecondValue = dataList[processed + response.RequestIndex][1],
+                                Success = true
+                            });
+                        }
+                        else
+                        {
+                            if (response.Fault.ErrorCode.ToString("X") == "80040237")
+                            {
+                                OnRaiseError(new ResultEventArgs
+                                {
+                                    LineNumber = totalLineNumber,
+                                    FirstValue = dataList[processed + response.RequestIndex][0],
+                                    SecondValue = dataList[processed + response.RequestIndex][1],
+                                    Success = false,
+                                    Message = "Relationship was not created because it already exists"
+                                });
+                            }
+                            else
+                            {
+                                OnRaiseError(new ResultEventArgs
+                                {
+                                    LineNumber = totalLineNumber,
+                                    FirstValue = dataList[processed + response.RequestIndex][0],
+                                    SecondValue = dataList[processed + response.RequestIndex][1],
+                                    Success = false,
+                                    Message = response.Fault.Message
+                                });
+                            }
+                        }
+                    }
+                    processed += batch.Requests.Count;
+
+                    batch.Requests.Clear();
+                }
+            }
+
+            if (settings.ImportInBatch && batch.Requests.Count > 0)
+            {
+                var batchResponse = (ExecuteMultipleResponse)service.Execute(batch);
+                foreach (var response in batchResponse.Responses)
+                {
+                    var totalLineNumber = processed + response.RequestIndex + 1;
+                    if (response.Fault == null)
+                    {
+                        OnRaiseSuccess(new ResultEventArgs
+                        {
+                            LineNumber = totalLineNumber,
+                            FirstValue = dataList[processed + response.RequestIndex][0],
+                            SecondValue = dataList[processed + response.RequestIndex][1],
+                            Success = true
+                        });
+                    }
+                    else
+                    {
+                        if (response.Fault.ErrorCode.ToString("X") == "80040237")
                         {
                             OnRaiseError(new ResultEventArgs
                             {
-                                LineNumber = lineNumber,
+                                LineNumber = totalLineNumber,
+                                FirstValue = dataList[processed + response.RequestIndex][0],
+                                SecondValue = dataList[processed + response.RequestIndex][1],
+                                Success = false,
                                 Message = "Relationship was not created because it already exists"
                             });
                         }
                         else
                         {
-                            OnRaiseError(new ResultEventArgs { LineNumber = lineNumber, Message = error.Message });
+                            OnRaiseError(new ResultEventArgs
+                            {
+                                LineNumber = totalLineNumber,
+                                FirstValue = dataList[processed + response.RequestIndex][0],
+                                SecondValue = dataList[processed + response.RequestIndex][1],
+                                Success = false,
+                                Message = response.Fault.Message
+                            });
                         }
                     }
                 }
+
+                batch.Requests.Clear();
             }
+        }
+
+        public int LoadFile()
+        {
+            if (!File.Exists(filePath))
+            {
+                SendInformation?.Invoke(this, new ResultEventArgs { Message = $"File '{filePath}' does not exist" });
+            }
+            SendInformation?.Invoke(this, new ResultEventArgs { Message = $"Separator is '{settings.Separator}'" });
+
+            lines = new List<string>();
+
+            using (var reader = new StreamReader(filePath, Encoding.Default))
+            {
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    lines.Add(line);
+                }
+            }
+
+            return lines.Count;
         }
 
         public void ManageRoleAssociation()
         {
+            if (settings.ImportInBatch)
+            {
+                SendInformation?.Invoke(this, new ResultEventArgs { Message = "Batch processing not available for roles association" });
+            }
+
+            string[] data = new string[2];
+
             using (var reader = new StreamReader(filePath, Encoding.Default))
             {
                 string line;
@@ -284,8 +515,6 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
                             OnRaiseError(new ResultEventArgs { LineNumber = lineNumber, Message = message });
                             continue;
                         }
-
-                        string[] data = new string[2];
 
                         using (TextFieldParser parser = new TextFieldParser(new StringReader(line))
                         {
@@ -332,6 +561,9 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
                                 OnRaiseError(new ResultEventArgs
                                 {
                                     LineNumber = lineNumber,
+                                    Success = false,
+                                    FirstValue = data[0],
+                                    SecondValue = data[1],
                                     Message =
                                         $"Unable to find a user with value {(settings.FirstEntity == "systemuser" ? data[0] : data[1])} for attribute {(settings.FirstEntity == "systemuser" ? settings.FirstAttributeName : settings.SecondAttributeName)}"
                                 });
@@ -363,6 +595,9 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
                                 OnRaiseError(new ResultEventArgs
                                 {
                                     LineNumber = lineNumber,
+                                    Success = false,
+                                    FirstValue = data[0],
+                                    SecondValue = data[1],
                                     Message =
                                         $"Unable to find a team with value {(settings.FirstEntity == "team" ? data[0] : data[1])} for attribute {(settings.FirstEntity == "team" ? settings.FirstAttributeName : settings.SecondAttributeName)}"
                                 });
@@ -390,24 +625,50 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
                             OnRaiseError(new ResultEventArgs
                             {
                                 LineNumber = lineNumber,
+                                Success = false,
+                                FirstValue = data[0],
+                                SecondValue = data[1],
                                 Message = $"Unable to find a role with value {(settings.FirstEntity == "role" ? data[0] : data[1])} for attribute {(settings.FirstEntity == "role" ? settings.FirstAttributeName : settings.SecondAttributeName)} and business unit {buRef.Name}"
                             });
                             continue;
                         }
 
-                        var request = new AssociateRequest
+                        if (isDelete)
                         {
-                            Target = new EntityReference(principal.LogicalName, principal.Id),
-                            Relationship = new Relationship(settings.Relationship),
-                            RelatedEntities = new EntityReferenceCollection
+                            var request = new DisassociateRequest
+                            {
+                                Target = new EntityReference(principal.LogicalName, principal.Id),
+                                Relationship = new Relationship(settings.Relationship),
+                                RelatedEntities = new EntityReferenceCollection
                                 {
                                     new EntityReference(role.LogicalName, role.Id)
                                 }
-                        };
+                            };
 
-                        service.Execute(request);
+                            service.Execute(request);
+                        }
+                        else
+                        {
+                            var request = new AssociateRequest
+                            {
+                                Target = new EntityReference(principal.LogicalName, principal.Id),
+                                Relationship = new Relationship(settings.Relationship),
+                                RelatedEntities = new EntityReferenceCollection
+                                {
+                                    new EntityReference(role.LogicalName, role.Id)
+                                }
+                            };
 
-                        OnRaiseSuccess(new ResultEventArgs { LineNumber = lineNumber });
+                            service.Execute(request);
+                        }
+
+                        OnRaiseSuccess(new ResultEventArgs
+                        {
+                            LineNumber = lineNumber,
+                            Success = true,
+                            FirstValue = data[0],
+                            SecondValue = data[1]
+                        });
                     }
                     catch (FaultException<OrganizationServiceFault> error)
                     {
@@ -416,12 +677,22 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
                             OnRaiseError(new ResultEventArgs
                             {
                                 LineNumber = lineNumber,
+                                Success = false,
+                                FirstValue = data[0],
+                                SecondValue = data[1],
                                 Message = "Relationship was not created because it already exists"
                             });
                         }
                         else
                         {
-                            OnRaiseError(new ResultEventArgs { LineNumber = lineNumber, Message = error.Message });
+                            OnRaiseError(new ResultEventArgs
+                            {
+                                LineNumber = lineNumber,
+                                Success = false,
+                                FirstValue = data[0],
+                                SecondValue = data[1],
+                                Message = error.Message
+                            });
                         }
                     }
                 }
@@ -432,20 +703,38 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
         {
             EventHandler<ResultEventArgs> handler = RaiseError;
 
-            if (handler != null)
-            {
-                handler(this, e);
-            }
+            handler?.Invoke(this, e);
         }
 
         protected virtual void OnRaiseSuccess(ResultEventArgs e)
         {
             EventHandler<ResultEventArgs> handler = RaiseSuccess;
 
-            if (handler != null)
+            handler?.Invoke(this, e);
+        }
+
+        private void GetRecords(string entity, string attribute, List<Entity> records)
+        {
+            var query = new QueryExpression(entity)
             {
-                handler(this, e);
-            }
+                NoLock = true,
+                ColumnSet = new ColumnSet(attribute),
+                PageInfo = new PagingInfo
+                {
+                    Count = 500,
+                    PageNumber = 1
+                }
+            };
+
+            EntityCollection ec;
+            do
+            {
+                ec = service.RetrieveMultiple(query);
+                records.AddRange(ec.Entities.ToArray());
+
+                query.PageInfo.PageNumber++;
+                query.PageInfo.PagingCookie = ec.PagingCookie;
+            } while (ec.MoreRecords);
         }
     }
 }

@@ -1,6 +1,7 @@
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.Text;
 
@@ -30,7 +31,7 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
 
         public event EventHandler<ExportResultEventArgs> SendInformation;
 
-        public void Export()
+        public void Export(BackgroundWorker bw)
         {
             var qe = new QueryExpression(settings.Relationship)
             {
@@ -38,10 +39,39 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
                 PageInfo = new PagingInfo { Count = 250, PageNumber = 1 }
             };
 
+            if (!settings.FirstAttributeIsGuid)
+            {
+                qe.LinkEntities.Add(new LinkEntity
+                {
+                    LinkFromEntityName = settings.Relationship,
+                    LinkFromAttributeName = settings.FirstEntity + "id",
+                    LinkToAttributeName = settings.FirstEntity + "id",
+                    LinkToEntityName = settings.FirstEntity,
+                    Columns = new ColumnSet(settings.FirstAttributeName),
+                    EntityAlias = "first"
+                });
+            }
+
+            if (!settings.SecondAttributeIsGuid)
+            {
+                qe.LinkEntities.Add(new LinkEntity
+                {
+                    LinkFromEntityName = settings.Relationship,
+                    LinkFromAttributeName = settings.SecondEntity + "id",
+                    LinkToAttributeName = settings.SecondEntity + "id",
+                    LinkToEntityName = settings.SecondEntity,
+                    Columns = new ColumnSet(settings.SecondAttributeName),
+                    EntityAlias = "second"
+                });
+            }
+
             EntityCollection results;
 
             do
             {
+                if (bw.CancellationPending)
+                    return;
+
                 results = service.RetrieveMultiple(qe);
 
                 SendInformation?.Invoke(this, new ExportResultEventArgs { Message = $"Parsing page {qe.PageInfo.PageNumber}..." });
@@ -84,22 +114,26 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
 
                             if (!settings.FirstAttributeIsGuid)
                             {
-                                var record = service.Retrieve(settings.FirstEntity, guidFirst,
-                                    new ColumnSet(settings.FirstAttributeName));
+                                dataFirst = result.GetAttributeValue<AliasedValue>("first." + settings.FirstAttributeName)?.Value?.ToString();
 
-                                if (!record.Contains(settings.FirstAttributeName))
+                                //var record = service.Retrieve(settings.FirstEntity, guidFirst,
+                                //    new ColumnSet(settings.FirstAttributeName));
+
+                                //if (!record.Contains(settings.FirstAttributeName))
+                                if (string.IsNullOrEmpty(dataFirst))
                                 {
                                     OnRaiseError(new ExportResultEventArgs
                                     {
                                         Message =
                                             string.Format("The record '{0}' ({1}) does not contain value for attribute '{2}' and so the NN relationship cannot be exported",
-                                            record.Id.ToString("B"),
+                                            //record.Id.ToString("B"),
+                                            result.GetAttributeValue<Guid>(settings.FirstEntity + "id"),
                                             settings.FirstEntity,
                                             settings.FirstAttributeName)
                                     });
                                     continue;
                                 }
-                                dataFirst = record[settings.FirstAttributeName].ToString();
+                                //dataFirst = record[settings.FirstAttributeName].ToString();
                             }
                             else
                             {
@@ -108,22 +142,26 @@ namespace Javista.XrmToolBox.ManageNN.AppCode
 
                             if (!settings.SecondAttributeIsGuid)
                             {
-                                var record = service.Retrieve(settings.SecondEntity, guidSecond,
-                                    new ColumnSet(settings.SecondAttributeName));
+                                dataSecond = result.GetAttributeValue<AliasedValue>("second." + settings.SecondAttributeName)?.Value?.ToString();
 
-                                if (!record.Contains(settings.SecondAttributeName))
+                                //var record = service.Retrieve(settings.SecondEntity, guidSecond,
+                                //    new ColumnSet(settings.SecondAttributeName));
+
+                                //if (!record.Contains(settings.SecondAttributeName))
+                                if (string.IsNullOrEmpty(dataSecond))
                                 {
                                     OnRaiseError(new ExportResultEventArgs
                                     {
                                         Message =
                                             string.Format("The record '{0}' ({1}) does not contain value for attribute '{2}' and so the NN relationship cannot be exported",
-                                            record.Id.ToString("B"),
+                                                //record.Id.ToString("B"),
+                                                result.GetAttributeValue<Guid>(settings.SecondEntity + "id"),
                                             settings.SecondEntity,
                                             settings.SecondAttributeName)
                                     });
                                     continue;
                                 }
-                                dataSecond = record[settings.SecondAttributeName].ToString();
+                                //dataSecond = record[settings.SecondAttributeName].ToString();
                             }
                             else
                             {

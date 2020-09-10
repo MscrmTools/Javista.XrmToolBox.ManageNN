@@ -1,8 +1,10 @@
 using Javista.XrmToolBox.ManageNN.AppCode;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
+using Microsoft.Xrm.Sdk.Metadata.Query;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -15,6 +17,7 @@ namespace Javista.XrmToolBox.ManageNN
 {
     public partial class MainControl : PluginControlBase, IGitHubPlugin, IHelpPlugin
     {
+        private BackgroundWorker currentBw;
         private List<EntityMetadata> emds;
 
         public MainControl()
@@ -22,29 +25,11 @@ namespace Javista.XrmToolBox.ManageNN
             InitializeComponent();
         }
 
-        public string HelpUrl
-        {
-            get
-            {
-                return "https://github.com/MscrmTools/Javista.XrmToolBox.ManageNN/wiki";
-            }
-        }
+        public string HelpUrl => "https://github.com/MscrmTools/Javista.XrmToolBox.ManageNN/wiki";
 
-        public string RepositoryName
-        {
-            get
-            {
-                return "Javista.XrmToolBox.ManageNN";
-            }
-        }
+        public string RepositoryName => "Javista.XrmToolBox.ManageNN";
 
-        public string UserName
-        {
-            get
-            {
-                return "MscrmTools";
-            }
-        }
+        public string UserName => "MscrmTools";
 
         public static void AddItem(ListBox box, string item, ToolStripButton button)
         {
@@ -65,11 +50,32 @@ namespace Javista.XrmToolBox.ManageNN
             }
         }
 
+        public static void AddListViewItem(ListView lv, bool? success, string lineNumber, string firstValue, string secondValue, string message, ToolStripButton button)
+        {
+            lv.Invoke(new Action(() =>
+            {
+                lv.Items.Add(new ListViewItem("")
+                {
+                    SubItems =
+                    {
+                        lineNumber,
+                        firstValue,
+                        secondValue,
+                        success.HasValue ? success.Value ? "Success" : "Error" : "",
+                        message
+                    },
+                    ImageIndex = success.HasValue ? success.Value ? 0 : 1 : -1
+                });
+
+                button.Enabled = true;
+            }));
+        }
+
         private void btnBrowse_Click(object sender, EventArgs e)
         {
             var ofd = new OpenFileDialog
             {
-                Title = "Specify the file to process"
+                Title = @"Specify the file to process"
             };
 
             if (ofd.ShowDialog(ParentForm) == DialogResult.OK)
@@ -89,7 +95,7 @@ namespace Javista.XrmToolBox.ManageNN
             cbbFirstEntityAttribute.Items.Clear();
 
             foreach (var amd in emd.Attributes.Where(a => a.AttributeOf == null
-                && (a.AttributeType.Value == AttributeTypeCode.Integer
+                && a.AttributeType != null && (a.AttributeType.Value == AttributeTypeCode.Integer
                 || a.AttributeType.Value == AttributeTypeCode.Memo
                 || a.AttributeType.Value == AttributeTypeCode.String)))
             {
@@ -120,7 +126,7 @@ namespace Javista.XrmToolBox.ManageNN
             }
             else
             {
-                MessageBox.Show(ParentForm, "No many to many relationships found for this entity!", "Warning",
+                MessageBox.Show(ParentForm, @"No many to many relationships found for this entity!", @"Warning",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
@@ -161,7 +167,7 @@ namespace Javista.XrmToolBox.ManageNN
             cbbSecondEntityAttribute.Items.Clear();
 
             foreach (var amd in emd.Attributes.Where(a => a.AttributeOf == null
-               && (a.AttributeType.Value == AttributeTypeCode.Integer
+               && a.AttributeType != null && (a.AttributeType.Value == AttributeTypeCode.Integer
                || a.AttributeType.Value == AttributeTypeCode.Memo
                || a.AttributeType.Value == AttributeTypeCode.String)))
             {
@@ -182,27 +188,33 @@ namespace Javista.XrmToolBox.ManageNN
 
         private void ee_RaiseError(object sender, ExportResultEventArgs e)
         {
-            listLog.Items.Add(e.Message);
+            AddListViewItem(lvLogs, null, string.Empty, string.Empty, String.Empty, e.Message, tsbExportLogs);
         }
 
         private void Ee_SendInformation(object sender, ExportResultEventArgs e)
         {
-            AddItem(listLog, e.Message, tsbExportLogs);
+            AddListViewItem(lvLogs, null, "", "", "", e.Message, tsbExportLogs);
         }
 
         private void ie_RaiseError(object sender, ResultEventArgs e)
         {
-            AddItem(listLog, string.Format("Line '{0}' : Error! {1}", e.LineNumber, e.Message), tsbExportLogs);
+            AddListViewItem(lvLogs, e.Success, e.LineNumber.ToString(), e.FirstValue, e.SecondValue, e.Message, tsbExportLogs);
+
+            lblProcessed.Text = (int.Parse(lblProcessed.Text) + 1).ToString();
+            lblError.Text = (int.Parse(lblError.Text) + 1).ToString();
         }
 
         private void ie_RaiseSuccess(object sender, ResultEventArgs e)
         {
-            AddItem(listLog, string.Format("Line '{0}' : Success!", e.LineNumber), tsbExportLogs);
+            AddListViewItem(lvLogs, e.Success, e.LineNumber.ToString(), e.FirstValue, e.SecondValue, e.Message, tsbExportLogs);
+
+            lblProcessed.Text = (int.Parse(lblProcessed.Text) + 1).ToString();
+            lblSuccess.Text = (int.Parse(lblSuccess.Text) + 1).ToString();
         }
 
         private void Ie_SendInformation(object sender, ResultEventArgs e)
         {
-            AddItem(listLog, e.Message, tsbExportLogs);
+            AddListViewItem(lvLogs, null, string.Empty, string.Empty, String.Empty, e.Message, tsbExportLogs);
         }
 
         private void LoadMetadata()
@@ -212,8 +224,32 @@ namespace Javista.XrmToolBox.ManageNN
                 Message = "Loading metadata...",
                 Work = (bw, e) =>
                 {
-                    var request = new RetrieveAllEntitiesRequest { EntityFilters = EntityFilters.All };
-                    var response = (RetrieveAllEntitiesResponse)Service.Execute(request);
+                    EntityQueryExpression entityQueryExpression = new EntityQueryExpression
+                    {
+                        Criteria = new MetadataFilterExpression(),
+                        Properties = new MetadataPropertiesExpression
+                        {
+                            AllProperties = false,
+                            PropertyNames = { "Attributes", "ManyToManyRelationships", "DisplayName", "LogicalName", "SchemaName" }
+                        },
+                        AttributeQuery = new AttributeQueryExpression
+                        {
+                            Criteria = new MetadataFilterExpression(),
+                            Properties = new MetadataPropertiesExpression
+                            {
+                                AllProperties = false,
+                                PropertyNames = { "DisplayName", "LogicalName", "SchemaName", "AttributeOf", "AttributeType" }
+                            }
+                        },
+                    };
+
+                    RetrieveMetadataChangesRequest retrieveMetadataChangesRequest = new RetrieveMetadataChangesRequest
+                    {
+                        Query = entityQueryExpression,
+                        ClientVersionStamp = null
+                    };
+
+                    var response = (RetrieveMetadataChangesResponse)Service.Execute(retrieveMetadataChangesRequest);
                     e.Result = response.EntityMetadata.ToList();
                 },
                 PostWorkCallBack = e =>
@@ -247,7 +283,7 @@ namespace Javista.XrmToolBox.ManageNN
                         tsbImportNN.Enabled = false;
                         tsbDelete.Enabled = false;
 
-                        MessageBox.Show(ParentForm, "An error occured: " + e.Error.Message, "Error",
+                        MessageBox.Show(ParentForm, @"An error occured: " + e.Error.Message, @"Error",
                             MessageBoxButtons.OK,
                             MessageBoxIcon.Error);
                     }
@@ -258,17 +294,33 @@ namespace Javista.XrmToolBox.ManageNN
         private void rdbFirstGuid_CheckedChanged(object sender, EventArgs e)
         {
             cbbFirstEntityAttribute.Enabled = rdbFirstAttribute.Checked;
+            chkCacheFirstEntity.Enabled = rdbFirstAttribute.Checked;
+            if (rdbFirstGuid.Checked) chkCacheFirstEntity.Checked = false;
         }
 
         private void rdbSecondGuid_CheckedChanged(object sender, EventArgs e)
         {
             cbbSecondEntityAttribute.Enabled = rdbSecondAttribute.Checked;
+            chkCacheSecondEntity.Enabled = rdbSecondAttribute.Checked;
+            if (rdbSecondGuid.Checked) chkCacheSecondEntity.Checked = false;
+        }
+
+        private void tsbCancel_Click(object sender, EventArgs e)
+        {
+            currentBw?.CancelAsync();
+            currentBw?.ReportProgress(0, "Cancellation requested...");
+            AddListViewItem(lvLogs, null, string.Empty, string.Empty, String.Empty, "Cancellation requested...", tsbExportLogs);
         }
 
         private void tsbClearLogs_Click(object sender, EventArgs e)
         {
-            listLog.Items.Clear();
+            lvLogs.Items.Clear();
             tsbExportLogs.Enabled = false;
+            pnlStats.Visible = false;
+            lblProcessed.Text = @"0";
+            lblSuccess.Text = @"0";
+            lblError.Text = @"0";
+            lblTotal.Text = @"0";
         }
 
         private void tsbClose_Click(object sender, EventArgs e)
@@ -278,15 +330,13 @@ namespace Javista.XrmToolBox.ManageNN
 
         private void tsbDebug_CheckedChanged(object sender, EventArgs e)
         {
-            ((ToolStripButton)sender).Text = ((ToolStripButton)sender).Text == "Debug : Off" ? "Debug : On" : "Debug : Off";
+            ((ToolStripButton)sender).Text = ((ToolStripButton)sender).Text == @"Debug : Off" ? "Debug : On" : "Debug : Off";
         }
 
         private void tsbDelete_Click(object sender, EventArgs e)
         {
             if (txtFilePath.Text.Length == 0)
                 return;
-
-            listLog.Items.Clear();
 
             var settings = new ImportFileSettings
             {
@@ -297,42 +347,57 @@ namespace Javista.XrmToolBox.ManageNN
                 SecondEntity = ((EntityInfo)cbbSecondEntity.SelectedItem).Metadata.LogicalName,
                 SecondAttributeIsGuid = rdbSecondGuid.Checked,
                 SecondAttributeName = ((AttributeInfo)cbbSecondEntityAttribute.SelectedItem).Metadata.LogicalName,
-                Separator = tsddbSeparator.Tag.ToString()
+                Separator = tsddbSeparator.Tag.ToString(),
+                ImportInBatch = chkImportInBatch.Checked,
+                BatchCount = nudBatchCount.Value
             };
+
+            tsbClearLogs_Click(tsbClearLogs, new EventArgs());
+
+            tsbCancel.Visible = true;
+            pnlStats.Visible = true;
 
             WorkAsync(new WorkAsyncInfo
             {
                 Message = "Deleting many to many relationships...",
                 AsyncArgument = new object[] { settings, txtFilePath.Text },
+                IsCancelable = true,
                 Work = (bw, evt) =>
                 {
                     var innerSettings = (ImportFileSettings)((object[])evt.Argument)[0];
                     var filePath = ((object[])evt.Argument)[1].ToString();
-                    var ie = new DeleteEngine(filePath, this.Service, innerSettings);
+                    var ie = new ImportEngine(filePath, Service, innerSettings, true);
                     ie.RaiseError += ie_RaiseError;
                     ie.RaiseSuccess += ie_RaiseSuccess;
-                    ie.Delete();
+                    ie.LoadFile();
+                    ie.Import(bw);
                 },
                 PostWorkCallBack = evt =>
                 {
+                    tsbCancel.Visible = false;
+
                     if (evt.Error != null)
                     {
-                        MessageBox.Show(this, $"An error occured during delete: {evt.Error.Message}", "Error",
+                        MessageBox.Show(this, $@"An error occured during delete: {evt.Error.Message}", @"Error",
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
+                },
+                ProgressChanged = evt =>
+                {
+                    SetWorkingMessage(evt.UserState.ToString());
                 }
             });
         }
 
         private void tsbExport_Click(object sender, EventArgs e)
         {
-            var sfd = new SaveFileDialog { Title = "Select where to save the file", Filter = "Csv file|*.csv" };
+            pnlStats.Visible = false;
+
+            var sfd = new SaveFileDialog { Title = @"Select where to save the file", Filter = @"CSV file|*.csv" };
             if (sfd.ShowDialog(ParentForm) != DialogResult.OK)
             {
                 return;
             }
-
-            listLog.Items.Clear();
 
             var settings = new ImportFileSettings
             {
@@ -347,26 +412,35 @@ namespace Javista.XrmToolBox.ManageNN
                 Debug = tsbDebug.Checked
             };
 
+            tsbClearLogs_Click(tsbClearLogs, new EventArgs());
+            tsbCancel.Visible = true;
+
             WorkAsync(new WorkAsyncInfo
             {
                 Message = "Exporting many to many relationship records...",
                 AsyncArgument = new object[] { settings, sfd.FileName },
+                IsCancelable = true,
                 Work = (bw, evt) =>
                 {
                     var innerSettings = (ImportFileSettings)((object[])evt.Argument)[0];
                     var filePath = ((object[])evt.Argument)[1].ToString();
-                    var ee = new ExportEngine(filePath, this.Service, innerSettings);
+                    var ee = new ExportEngine(filePath, Service, innerSettings);
                     ee.SendInformation += Ee_SendInformation;
                     ee.RaiseError += ee_RaiseError;
-                    ee.Export();
+                    ee.Export(bw);
                 },
                 PostWorkCallBack = evt =>
                 {
+                    tsbCancel.Visible = false;
                     if (evt.Error != null)
                     {
-                        MessageBox.Show(this, $"An error occured during export: {evt.Error.Message}", "Error",
+                        MessageBox.Show(this, $@"An error occured during export: {evt.Error.Message}", @"Error",
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
+                },
+                ProgressChanged = evt =>
+                {
+                    SetWorkingMessage(evt.UserState.ToString());
                 }
             });
         }
@@ -375,17 +449,24 @@ namespace Javista.XrmToolBox.ManageNN
         {
             var sfd = new SaveFileDialog
             {
-                Filter = "Texte file|*.txt"
+                Filter = @"CSV file|*.csv"
             };
 
             if (sfd.ShowDialog(this) == DialogResult.OK)
             {
                 using (var writer = new StreamWriter(sfd.FileName, false))
                 {
-                    writer.WriteLine(string.Join(Environment.NewLine, listLog.Items.Cast<string>()));
+                    //  writer.WriteLine(string.Join(Environment.NewLine, listLog.Items.Cast<string>()));
+
+                    foreach (ListViewItem item in lvLogs.Items)
+                    {
+                        writer.WriteLine(string.Join(",", item.SubItems.Cast<ListViewItem.ListViewSubItem>().Select(i => i.Text).Skip(1)));
+                    }
                 }
 
-                var result = MessageBox.Show(this, "Export completed!\n\nDo you want to open the file now?", "Success",
+                var result = MessageBox.Show(this, @"Export completed!
+
+Do you want to open the file now?", @"Success",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Information);
                 if (result == DialogResult.Yes)
                 {
@@ -399,8 +480,6 @@ namespace Javista.XrmToolBox.ManageNN
             if (txtFilePath.Text.Length == 0)
                 return;
 
-            listLog.Items.Clear();
-
             var settings = new ImportFileSettings
             {
                 FirstEntity = ((EntityInfo)cbbFirstEntity.SelectedItem).Metadata.LogicalName,
@@ -411,30 +490,51 @@ namespace Javista.XrmToolBox.ManageNN
                 SecondAttributeIsGuid = rdbSecondGuid.Checked,
                 SecondAttributeName = rdbSecondGuid.Checked ? ((EntityInfo)cbbSecondEntity.SelectedItem).Metadata.PrimaryIdAttribute : ((AttributeInfo)cbbSecondEntityAttribute.SelectedItem).Metadata.LogicalName,
                 Separator = tsddbSeparator.Tag.ToString(),
-                Debug = tsbDebug.Checked
+                Debug = tsbDebug.Checked,
+                CacheFirstEntity = chkCacheFirstEntity.Checked,
+                CacheSecondEntity = chkCacheSecondEntity.Checked,
+                ImportInBatch = chkImportInBatch.Checked,
+                BatchCount = nudBatchCount.Value
             };
+
+            tsbClearLogs_Click(tsbClearLogs, new EventArgs());
+
+            pnlStats.Visible = true;
+            tsbCancel.Visible = true;
 
             WorkAsync(new WorkAsyncInfo
             {
                 Message = "Importing many to many relationship records...",
                 AsyncArgument = new object[] { settings, txtFilePath.Text },
+                IsCancelable = true,
                 Work = (bw, evt) =>
                 {
+                    currentBw = bw;
                     var innerSettings = (ImportFileSettings)((object[])evt.Argument)[0];
                     var filePath = ((object[])evt.Argument)[1].ToString();
-                    var ie = new ImportEngine(filePath, this.Service, innerSettings);
+                    var ie = new ImportEngine(filePath, Service, innerSettings);
                     ie.SendInformation += Ie_SendInformation;
                     ie.RaiseError += ie_RaiseError;
                     ie.RaiseSuccess += ie_RaiseSuccess;
-                    ie.Import();
+                    int linesNumber = ie.LoadFile();
+
+                    Invoke(new Action(() => { lblTotal.Text = linesNumber.ToString(); }));
+
+                    ie.Import(bw);
                 },
                 PostWorkCallBack = evt =>
                 {
+                    tsbCancel.Visible = false;
+
                     if (evt.Error != null)
                     {
-                        MessageBox.Show(this, $"An error occured during import: {evt.Error.Message}", "Error",
+                        MessageBox.Show(this, $@"An error occured during import: {evt.Error.Message}", @"Error",
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
+                },
+                ProgressChanged = evt =>
+                {
+                    SetWorkingMessage(evt.UserState.ToString());
                 }
             });
         }
