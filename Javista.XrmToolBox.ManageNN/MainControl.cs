@@ -200,16 +200,22 @@ namespace Javista.XrmToolBox.ManageNN
         {
             AddListViewItem(lvLogs, e.Success, e.LineNumber.ToString(), e.FirstValue, e.SecondValue, e.Message, tsbExportLogs);
 
-            lblProcessed.Text = (int.Parse(lblProcessed.Text) + 1).ToString();
-            lblError.Text = (int.Parse(lblError.Text) + 1).ToString();
+            Invoke(new Action(() =>
+            {
+                lblProcessed.Text = (int.Parse(lblProcessed.Text) + 1).ToString();
+                lblError.Text = (int.Parse(lblError.Text) + 1).ToString();
+            }));
         }
 
         private void ie_RaiseSuccess(object sender, ResultEventArgs e)
         {
             AddListViewItem(lvLogs, e.Success, e.LineNumber.ToString(), e.FirstValue, e.SecondValue, e.Message, tsbExportLogs);
 
-            lblProcessed.Text = (int.Parse(lblProcessed.Text) + 1).ToString();
-            lblSuccess.Text = (int.Parse(lblSuccess.Text) + 1).ToString();
+            Invoke(new Action(() =>
+            {
+                lblProcessed.Text = (int.Parse(lblProcessed.Text) + 1).ToString();
+                lblSuccess.Text = (int.Parse(lblSuccess.Text) + 1).ToString();
+            }));
         }
 
         private void Ie_SendInformation(object sender, ResultEventArgs e)
