@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Javista.XrmToolBox.ManageNN</id>
+    <version>1.2020.11.11</version>
+    <title>NN Relationship manager</title>
+    <authors>MscrmTools</authors>
+    <owners>MscrmTools</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <projectUrl>https://github.com/MscrmTools/XrmToolBox/wiki/Manage-NN-relationships</projectUrl>
+    <iconUrl>https://www.xrmtoolbox.com/plugins/Javista.XrmToolBox.ManageNN/javista.png</iconUrl>
+    <description>Import, export or delete many-to-many relationships</description>
+    <summary>Import, export or delete many-to-many relationships</summary>
+    <releaseNotes>
+      Added filter for logs
+      Added double quotes for log export to handle comma in data
+    </releaseNotes>
+    <tags>XrmToolBox NN Relationship manager</tags>
+    <dependencies>
+      <dependency id="XrmToolBox" version="1.2016.4.28" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\Release\Javista.XrmToolBox.ManageNN.dll" target="lib\net452\Plugins" />
+  </files>
+</package>

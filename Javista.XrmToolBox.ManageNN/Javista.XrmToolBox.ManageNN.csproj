@@ -275,6 +275,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="Javista.XrmToolBox.ManageNN.nuspec" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
