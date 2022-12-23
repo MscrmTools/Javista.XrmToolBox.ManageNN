@@ -94,13 +94,6 @@ namespace Javista.XrmToolBox.ManageNN
             this.btnBrowse = new System.Windows.Forms.Button();
             this.txtFilePath = new System.Windows.Forms.TextBox();
             this.gbLog = new System.Windows.Forms.GroupBox();
-            this.lvLogs = new System.Windows.Forms.ListView();
-            this.chLogStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chLogLineNumber = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chLogFirstValue = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chLogSecondValue = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chLogStatusText = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chLogMessage = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.statusImageList = new System.Windows.Forms.ImageList(this.components);
             this.pnlStats = new System.Windows.Forms.Panel();
             this.lblError = new System.Windows.Forms.Label();
@@ -111,6 +104,16 @@ namespace Javista.XrmToolBox.ManageNN
             this.label5 = new System.Windows.Forms.Label();
             this.lblTotal = new System.Windows.Forms.Label();
             this.lblTotalLabel = new System.Windows.Forms.Label();
+            this.pnlFilterLogs = new System.Windows.Forms.Panel();
+            this.lvLogs = new System.Windows.Forms.ListView();
+            this.chLogStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chLogLineNumber = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chLogFirstValue = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chLogSecondValue = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chLogStatusText = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chLogMessage = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chkShowErrorsOnly = new System.Windows.Forms.CheckBox();
+            this.chkHideAlreadyExists = new System.Windows.Forms.CheckBox();
             this.tsMain.SuspendLayout();
             this.gbFirst.SuspendLayout();
             this.gbRelationship.SuspendLayout();
@@ -119,6 +122,7 @@ namespace Javista.XrmToolBox.ManageNN
             ((System.ComponentModel.ISupportInitialize)(this.nudBatchCount)).BeginInit();
             this.gbLog.SuspendLayout();
             this.pnlStats.SuspendLayout();
+            this.pnlFilterLogs.SuspendLayout();
             this.SuspendLayout();
             // 
             // cbbFirstEntity
@@ -181,7 +185,7 @@ namespace Javista.XrmToolBox.ManageNN
             this.tsbClearLogs});
             this.tsMain.Location = new System.Drawing.Point(0, 0);
             this.tsMain.Name = "tsMain";
-            this.tsMain.Size = new System.Drawing.Size(1080, 32);
+            this.tsMain.Size = new System.Drawing.Size(1080, 38);
             this.tsMain.TabIndex = 3;
             this.tsMain.Text = "tsMain";
             // 
@@ -191,14 +195,14 @@ namespace Javista.XrmToolBox.ManageNN
             this.tsbClose.Image = ((System.Drawing.Image)(resources.GetObject("tsbClose.Image")));
             this.tsbClose.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbClose.Name = "tsbClose";
-            this.tsbClose.Size = new System.Drawing.Size(28, 29);
+            this.tsbClose.Size = new System.Drawing.Size(34, 33);
             this.tsbClose.Text = "Close this tool";
             this.tsbClose.Click += new System.EventHandler(this.tsbClose_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 32);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 34);
             // 
             // tsbLoadMetadata
             // 
@@ -212,7 +216,7 @@ namespace Javista.XrmToolBox.ManageNN
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 32);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 34);
             // 
             // tsbImportNN
             // 
@@ -260,7 +264,7 @@ namespace Javista.XrmToolBox.ManageNN
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(6, 32);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(6, 34);
             // 
             // tsddbSeparator
             // 
@@ -285,31 +289,31 @@ namespace Javista.XrmToolBox.ManageNN
             this.commaToolStripMenuItem.Checked = true;
             this.commaToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.commaToolStripMenuItem.Name = "commaToolStripMenuItem";
-            this.commaToolStripMenuItem.Size = new System.Drawing.Size(198, 30);
+            this.commaToolStripMenuItem.Size = new System.Drawing.Size(216, 34);
             this.commaToolStripMenuItem.Text = "Comma (,)";
             // 
             // semicolonToolStripMenuItem
             // 
             this.semicolonToolStripMenuItem.Name = "semicolonToolStripMenuItem";
-            this.semicolonToolStripMenuItem.Size = new System.Drawing.Size(198, 30);
+            this.semicolonToolStripMenuItem.Size = new System.Drawing.Size(216, 34);
             this.semicolonToolStripMenuItem.Text = "Semicolon (;)";
             // 
             // pipeToolStripMenuItem
             // 
             this.pipeToolStripMenuItem.Name = "pipeToolStripMenuItem";
-            this.pipeToolStripMenuItem.Size = new System.Drawing.Size(198, 30);
+            this.pipeToolStripMenuItem.Size = new System.Drawing.Size(216, 34);
             this.pipeToolStripMenuItem.Text = "Pipe (|)";
             // 
             // tabToolStripMenuItem
             // 
             this.tabToolStripMenuItem.Name = "tabToolStripMenuItem";
-            this.tabToolStripMenuItem.Size = new System.Drawing.Size(198, 30);
+            this.tabToolStripMenuItem.Size = new System.Drawing.Size(216, 34);
             this.tabToolStripMenuItem.Text = "Tab";
             // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 32);
+            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 34);
             // 
             // tsbDebug
             // 
@@ -327,7 +331,7 @@ namespace Javista.XrmToolBox.ManageNN
             // toolStripSeparator7
             // 
             this.toolStripSeparator7.Name = "toolStripSeparator7";
-            this.toolStripSeparator7.Size = new System.Drawing.Size(6, 32);
+            this.toolStripSeparator7.Size = new System.Drawing.Size(6, 34);
             // 
             // tslLogs
             // 
@@ -350,7 +354,7 @@ namespace Javista.XrmToolBox.ManageNN
             this.tsbClearLogs.Image = ((System.Drawing.Image)(resources.GetObject("tsbClearLogs.Image")));
             this.tsbClearLogs.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbClearLogs.Name = "tsbClearLogs";
-            this.tsbClearLogs.Size = new System.Drawing.Size(71, 29);
+            this.tsbClearLogs.Size = new System.Drawing.Size(79, 29);
             this.tsbClearLogs.Text = "Clear";
             this.tsbClearLogs.Click += new System.EventHandler(this.tsbClearLogs_Click);
             // 
@@ -362,7 +366,7 @@ namespace Javista.XrmToolBox.ManageNN
             this.gbFirst.Controls.Add(this.label2);
             this.gbFirst.Controls.Add(this.cbbFirstEntity);
             this.gbFirst.Dock = System.Windows.Forms.DockStyle.Top;
-            this.gbFirst.Location = new System.Drawing.Point(0, 32);
+            this.gbFirst.Location = new System.Drawing.Point(0, 38);
             this.gbFirst.Name = "gbFirst";
             this.gbFirst.Size = new System.Drawing.Size(1080, 80);
             this.gbFirst.TabIndex = 5;
@@ -418,7 +422,7 @@ namespace Javista.XrmToolBox.ManageNN
             // 
             this.gbRelationship.Controls.Add(this.cbbRelationship);
             this.gbRelationship.Dock = System.Windows.Forms.DockStyle.Top;
-            this.gbRelationship.Location = new System.Drawing.Point(0, 112);
+            this.gbRelationship.Location = new System.Drawing.Point(0, 118);
             this.gbRelationship.Name = "gbRelationship";
             this.gbRelationship.Size = new System.Drawing.Size(1080, 54);
             this.gbRelationship.TabIndex = 6;
@@ -433,7 +437,7 @@ namespace Javista.XrmToolBox.ManageNN
             this.gbSecond.Controls.Add(this.label1);
             this.gbSecond.Controls.Add(this.cbbSecondEntity);
             this.gbSecond.Dock = System.Windows.Forms.DockStyle.Top;
-            this.gbSecond.Location = new System.Drawing.Point(0, 166);
+            this.gbSecond.Location = new System.Drawing.Point(0, 172);
             this.gbSecond.Name = "gbSecond";
             this.gbSecond.Size = new System.Drawing.Size(1080, 80);
             this.gbSecond.TabIndex = 6;
@@ -495,7 +499,7 @@ namespace Javista.XrmToolBox.ManageNN
             this.gbImportFile.Controls.Add(this.btnBrowse);
             this.gbImportFile.Controls.Add(this.txtFilePath);
             this.gbImportFile.Dock = System.Windows.Forms.DockStyle.Top;
-            this.gbImportFile.Location = new System.Drawing.Point(0, 246);
+            this.gbImportFile.Location = new System.Drawing.Point(0, 252);
             this.gbImportFile.Name = "gbImportFile";
             this.gbImportFile.Size = new System.Drawing.Size(1080, 119);
             this.gbImportFile.TabIndex = 7;
@@ -593,66 +597,15 @@ namespace Javista.XrmToolBox.ManageNN
             // gbLog
             // 
             this.gbLog.Controls.Add(this.lvLogs);
+            this.gbLog.Controls.Add(this.pnlFilterLogs);
             this.gbLog.Controls.Add(this.pnlStats);
             this.gbLog.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbLog.Location = new System.Drawing.Point(0, 365);
+            this.gbLog.Location = new System.Drawing.Point(0, 371);
             this.gbLog.Name = "gbLog";
-            this.gbLog.Size = new System.Drawing.Size(1080, 389);
+            this.gbLog.Size = new System.Drawing.Size(1080, 383);
             this.gbLog.TabIndex = 8;
             this.gbLog.TabStop = false;
             this.gbLog.Text = "Log";
-            // 
-            // lvLogs
-            // 
-            this.lvLogs.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.chLogStatus,
-            this.chLogLineNumber,
-            this.chLogFirstValue,
-            this.chLogSecondValue,
-            this.chLogStatusText,
-            this.chLogMessage});
-            this.lvLogs.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lvLogs.FullRowSelect = true;
-            this.lvLogs.HideSelection = false;
-            this.lvLogs.Location = new System.Drawing.Point(203, 22);
-            this.lvLogs.Name = "lvLogs";
-            this.lvLogs.Size = new System.Drawing.Size(874, 364);
-            this.lvLogs.SmallImageList = this.statusImageList;
-            this.lvLogs.TabIndex = 3;
-            this.lvLogs.UseCompatibleStateImageBehavior = false;
-            this.lvLogs.View = System.Windows.Forms.View.Details;
-            // 
-            // chLogStatus
-            // 
-            this.chLogStatus.Text = "";
-            this.chLogStatus.Width = 33;
-            // 
-            // chLogLineNumber
-            // 
-            this.chLogLineNumber.Text = "Line";
-            // 
-            // chLogFirstValue
-            // 
-            this.chLogFirstValue.DisplayIndex = 3;
-            this.chLogFirstValue.Text = "First Value";
-            this.chLogFirstValue.Width = 200;
-            // 
-            // chLogSecondValue
-            // 
-            this.chLogSecondValue.DisplayIndex = 4;
-            this.chLogSecondValue.Text = "Second Value";
-            this.chLogSecondValue.Width = 200;
-            // 
-            // chLogStatusText
-            // 
-            this.chLogStatusText.DisplayIndex = 2;
-            this.chLogStatusText.Text = "Result";
-            this.chLogStatusText.Width = 80;
-            // 
-            // chLogMessage
-            // 
-            this.chLogMessage.Text = "Message";
-            this.chLogMessage.Width = 300;
             // 
             // statusImageList
             // 
@@ -674,7 +627,7 @@ namespace Javista.XrmToolBox.ManageNN
             this.pnlStats.Dock = System.Windows.Forms.DockStyle.Left;
             this.pnlStats.Location = new System.Drawing.Point(3, 22);
             this.pnlStats.Name = "pnlStats";
-            this.pnlStats.Size = new System.Drawing.Size(200, 364);
+            this.pnlStats.Size = new System.Drawing.Size(200, 358);
             this.pnlStats.TabIndex = 1;
             this.pnlStats.Visible = false;
             // 
@@ -758,6 +711,90 @@ namespace Javista.XrmToolBox.ManageNN
             this.lblTotalLabel.TabIndex = 0;
             this.lblTotalLabel.Text = "Number of lines";
             // 
+            // pnlFilterLogs
+            // 
+            this.pnlFilterLogs.Controls.Add(this.chkHideAlreadyExists);
+            this.pnlFilterLogs.Controls.Add(this.chkShowErrorsOnly);
+            this.pnlFilterLogs.Dock = System.Windows.Forms.DockStyle.Top;
+            this.pnlFilterLogs.Location = new System.Drawing.Point(203, 22);
+            this.pnlFilterLogs.Name = "pnlFilterLogs";
+            this.pnlFilterLogs.Size = new System.Drawing.Size(874, 37);
+            this.pnlFilterLogs.TabIndex = 4;
+            // 
+            // lvLogs
+            // 
+            this.lvLogs.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.chLogStatus,
+            this.chLogLineNumber,
+            this.chLogFirstValue,
+            this.chLogSecondValue,
+            this.chLogStatusText,
+            this.chLogMessage});
+            this.lvLogs.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lvLogs.FullRowSelect = true;
+            this.lvLogs.HideSelection = false;
+            this.lvLogs.Location = new System.Drawing.Point(203, 59);
+            this.lvLogs.Name = "lvLogs";
+            this.lvLogs.Size = new System.Drawing.Size(874, 321);
+            this.lvLogs.SmallImageList = this.statusImageList;
+            this.lvLogs.TabIndex = 6;
+            this.lvLogs.UseCompatibleStateImageBehavior = false;
+            this.lvLogs.View = System.Windows.Forms.View.Details;
+            // 
+            // chLogStatus
+            // 
+            this.chLogStatus.Text = "";
+            this.chLogStatus.Width = 33;
+            // 
+            // chLogLineNumber
+            // 
+            this.chLogLineNumber.Text = "Line";
+            // 
+            // chLogFirstValue
+            // 
+            this.chLogFirstValue.DisplayIndex = 3;
+            this.chLogFirstValue.Text = "First Value";
+            this.chLogFirstValue.Width = 200;
+            // 
+            // chLogSecondValue
+            // 
+            this.chLogSecondValue.DisplayIndex = 4;
+            this.chLogSecondValue.Text = "Second Value";
+            this.chLogSecondValue.Width = 200;
+            // 
+            // chLogStatusText
+            // 
+            this.chLogStatusText.DisplayIndex = 2;
+            this.chLogStatusText.Text = "Result";
+            this.chLogStatusText.Width = 80;
+            // 
+            // chLogMessage
+            // 
+            this.chLogMessage.Text = "Message";
+            this.chLogMessage.Width = 300;
+            // 
+            // chkShowErrorsOnly
+            // 
+            this.chkShowErrorsOnly.Dock = System.Windows.Forms.DockStyle.Left;
+            this.chkShowErrorsOnly.Location = new System.Drawing.Point(0, 0);
+            this.chkShowErrorsOnly.Name = "chkShowErrorsOnly";
+            this.chkShowErrorsOnly.Size = new System.Drawing.Size(193, 37);
+            this.chkShowErrorsOnly.TabIndex = 0;
+            this.chkShowErrorsOnly.Text = "Show Errors only";
+            this.chkShowErrorsOnly.UseVisualStyleBackColor = true;
+            this.chkShowErrorsOnly.CheckedChanged += new System.EventHandler(this.chkShowErrorsOnly_CheckedChanged);
+            // 
+            // chkHideAlreadyExists
+            // 
+            this.chkHideAlreadyExists.Dock = System.Windows.Forms.DockStyle.Left;
+            this.chkHideAlreadyExists.Location = new System.Drawing.Point(193, 0);
+            this.chkHideAlreadyExists.Name = "chkHideAlreadyExists";
+            this.chkHideAlreadyExists.Size = new System.Drawing.Size(281, 37);
+            this.chkHideAlreadyExists.TabIndex = 1;
+            this.chkHideAlreadyExists.Text = "Hide \"Already exists\" error";
+            this.chkHideAlreadyExists.UseVisualStyleBackColor = true;
+            this.chkHideAlreadyExists.CheckedChanged += new System.EventHandler(this.chkHideAlreadyExists_CheckedChanged);
+            // 
             // MainControl
             // 
             this.Controls.Add(this.gbLog);
@@ -780,6 +817,7 @@ namespace Javista.XrmToolBox.ManageNN
             ((System.ComponentModel.ISupportInitialize)(this.nudBatchCount)).EndInit();
             this.gbLog.ResumeLayout(false);
             this.pnlStats.ResumeLayout(false);
+            this.pnlFilterLogs.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -813,15 +851,18 @@ namespace Javista.XrmToolBox.ManageNN
         private System.Windows.Forms.Label lblTotal;
         private System.Windows.Forms.Label lblTotalLabel;
         private ToolStripButton tsbCancel;
+        private ImageList statusImageList;
+        private NumericUpDown nudBatchCount;
+        private System.Windows.Forms.Label lblBatchCount;
         private ListView lvLogs;
         private ColumnHeader chLogStatus;
+        private ColumnHeader chLogLineNumber;
         private ColumnHeader chLogFirstValue;
         private ColumnHeader chLogSecondValue;
         private ColumnHeader chLogStatusText;
         private ColumnHeader chLogMessage;
-        private ImageList statusImageList;
-        private ColumnHeader chLogLineNumber;
-        private NumericUpDown nudBatchCount;
-        private System.Windows.Forms.Label lblBatchCount;
+        private Panel pnlFilterLogs;
+        private CheckBox chkHideAlreadyExists;
+        private CheckBox chkShowErrorsOnly;
     }
 }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  

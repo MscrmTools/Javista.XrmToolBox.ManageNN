@@ -19,6 +19,7 @@ namespace Javista.XrmToolBox.ManageNN
     {
         private BackgroundWorker currentBw;
         private List<EntityMetadata> emds;
+        private List<ListViewItem> logItems = new List<ListViewItem>();
 
         public MainControl()
         {
@@ -50,25 +51,35 @@ namespace Javista.XrmToolBox.ManageNN
             }
         }
 
-        public static void AddListViewItem(ListView lv, bool? success, string lineNumber, string firstValue, string secondValue, string message, ToolStripButton button)
+        public void AddListViewItem(ListView lv, bool? success, string lineNumber, string firstValue, string secondValue, string message, ToolStripButton button)
         {
-            lv.Invoke(new Action(() =>
-            {
-                lv.Items.Add(new ListViewItem("")
-                {
-                    SubItems =
-                    {
+            _ = lv.Invoke(new Action(() =>
+              {
+                  var item = new ListViewItem("")
+                  {
+                      SubItems =
+                      {
                         lineNumber,
                         firstValue,
                         secondValue,
                         success.HasValue ? success.Value ? "Success" : "Error" : "",
                         message
-                    },
-                    ImageIndex = success.HasValue ? success.Value ? 0 : 1 : -1
-                });
+                      },
+                      ImageIndex = success.HasValue ? success.Value ? 0 : 1 : -1
+                  };
 
-                button.Enabled = true;
-            }));
+                  logItems.Add(item);
+
+                  if (!chkShowErrorsOnly.Checked || chkShowErrorsOnly.Checked && !(success ?? false))
+                  {
+                      if (!chkHideAlreadyExists.Checked || chkHideAlreadyExists.Checked && (message.IndexOf("already exist") > 0))
+                      {
+                          lv.Items.Add(item);
+                      }
+                  }
+
+                  button.Enabled = true;
+              }));
         }
 
         private void btnBrowse_Click(object sender, EventArgs e)
@@ -184,6 +195,32 @@ namespace Javista.XrmToolBox.ManageNN
 
             cbbSecondEntityAttribute.DrawMode = DrawMode.OwnerDrawFixed;
             cbbSecondEntityAttribute.DrawItem += cbbAttribute_DrawItem;
+        }
+
+        private void chkHideAlreadyExists_CheckedChanged(object sender, EventArgs e)
+        {
+            lvLogs.Items.Clear();
+            if (chkHideAlreadyExists.Checked)
+            {
+                lvLogs.Items.AddRange(logItems.Where(i => i.SubItems[5].Text.IndexOf("already exist") < 0).OrderBy(i => int.Parse(i.SubItems[1].Text.Length == 0 ? "0" : i.SubItems[1].Text)).ToArray());
+            }
+            else
+            {
+                lvLogs.Items.AddRange(logItems.ToArray());
+            }
+        }
+
+        private void chkShowErrorsOnly_CheckedChanged(object sender, EventArgs e)
+        {
+            lvLogs.Items.Clear();
+            if (chkShowErrorsOnly.Checked)
+            {
+                lvLogs.Items.AddRange(logItems.Where(i => i.SubItems[4].Text != "Success").OrderBy(i => int.Parse(i.SubItems[1].Text.Length == 0 ? "0" : i.SubItems[1].Text)).ToArray());
+            }
+            else
+            {
+                lvLogs.Items.AddRange(logItems.ToArray());
+            }
         }
 
         private void ee_RaiseError(object sender, ExportResultEventArgs e)
@@ -418,6 +455,7 @@ namespace Javista.XrmToolBox.ManageNN
                 Debug = tsbDebug.Checked
             };
 
+            logItems.Clear();
             tsbClearLogs_Click(tsbClearLogs, new EventArgs());
             tsbCancel.Visible = true;
 
@@ -503,6 +541,7 @@ Do you want to open the file now?", @"Success",
                 BatchCount = nudBatchCount.Value
             };
 
+            logItems.Clear();
             tsbClearLogs_Click(tsbClearLogs, new EventArgs());
 
             pnlStats.Visible = true;
