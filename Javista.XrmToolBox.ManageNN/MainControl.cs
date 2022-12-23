@@ -500,11 +500,9 @@ namespace Javista.XrmToolBox.ManageNN
             {
                 using (var writer = new StreamWriter(sfd.FileName, false))
                 {
-                    //  writer.WriteLine(string.Join(Environment.NewLine, listLog.Items.Cast<string>()));
-
                     foreach (ListViewItem item in lvLogs.Items)
                     {
-                        writer.WriteLine(string.Join(",", item.SubItems.Cast<ListViewItem.ListViewSubItem>().Select(i => i.Text).Skip(1)));
+                        writer.WriteLine($"\"{string.Join("\",\"", item.SubItems.Cast<ListViewItem.ListViewSubItem>().Select(i => i.Text).Skip(1))}\"");
                     }
                 }
 
