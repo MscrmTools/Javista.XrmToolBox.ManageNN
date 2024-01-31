@@ -539,6 +539,29 @@ Do you want to open the file now?", @"Success",
                 BatchCount = nudBatchCount.Value
             };
 
+            var rmd = ((RelationshipInfo)cbbRelationship.SelectedItem).Metadata;
+
+            if (rmd.Entity1LogicalName == rmd.Entity2LogicalName)
+            {
+                if (rmd.Entity1AssociatedMenuConfiguration.Behavior == AssociatedMenuBehavior.UseLabel)
+                {
+                    var label = rmd.Entity1AssociatedMenuConfiguration.Label.UserLocalizedLabel.Label;
+                    var result = MessageBox.Show(this, $@"The selected relationship is self referential.
+
+The data in the first column of your import file will be considered as ""{label}"". Please ensure this is the expected behavior or invert both columns in your import file.
+", "Self referential relationship detected", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+                    if (result == DialogResult.Cancel) return;
+                }
+                else
+                {
+                    var result = MessageBox.Show(this, $@"The selected relationship is self referential and no custom label has been defined in the relationship to identify both side.
+
+The data in the first column of your import file will be used as first table data in the relationship. Please ensure this is the expected behavior or add custom labels in the relationship to identify data more precisely.
+", "Self referential relationship detected", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+                    if (result == DialogResult.Cancel) return;
+                }
+            }
+
             logItems.Clear();
             tsbClearLogs_Click(tsbClearLogs, new EventArgs());
 
