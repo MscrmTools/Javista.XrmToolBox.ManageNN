@@ -12,6 +12,7 @@ using System.Linq;
 using System.Windows.Forms;
 using XrmToolBox.Extensibility;
 using XrmToolBox.Extensibility.Interfaces;
+using XrmToolBox.Extensibility.UserControls;
 
 namespace Javista.XrmToolBox.ManageNN
 {
@@ -72,7 +73,7 @@ namespace Javista.XrmToolBox.ManageNN
 
                   if (!chkShowErrorsOnly.Checked || chkShowErrorsOnly.Checked && !(success ?? false))
                   {
-                      if (!chkHideAlreadyExists.Checked || chkHideAlreadyExists.Checked && (message.IndexOf("already exist") > 0))
+                      if (!chkHideAlreadyExists.Checked || chkHideAlreadyExists.Checked && (message.IndexOf("already exist") < 0))
                       {
                           lv.Items.Add(item);
                       }
@@ -303,7 +304,7 @@ namespace Javista.XrmToolBox.ManageNN
 
                         cbbFirstEntity.Items.Clear();
 
-                        foreach (var emd in emds)
+                        foreach (var emd in emds.Where(md => md.ManyToManyRelationships.Any()))
                         {
                             cbbFirstEntity.Items.Add(new EntityInfo { Metadata = emd });
                         }
@@ -481,6 +482,11 @@ namespace Javista.XrmToolBox.ManageNN
                         MessageBox.Show(this, $@"An error occured during export: {evt.Error.Message}", @"Error",
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
+                    AddListViewItem(lvLogs, null, "", "", "", "Export completed", tsbExportLogs);
+
+                    Notification.Type = NotificationType.Success;
+                    Notification.Message = "Export completed!";
+                    Notification.SetVisible(true, 5000);
                 },
                 ProgressChanged = evt =>
                 {
@@ -597,6 +603,11 @@ The data in the first column of your import file will be used as first table dat
                         MessageBox.Show(this, $@"An error occured during import: {evt.Error.Message}", @"Error",
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
+                    AddListViewItem(lvLogs, null, "", "", "", "Import completed", tsbExportLogs);
+
+                    Notification.Type = NotificationType.Success;
+                    Notification.Message = "Import completed!";
+                    Notification.SetVisible(true, 5000);
                 },
                 ProgressChanged = evt =>
                 {
@@ -629,20 +640,27 @@ The data in the first column of your import file will be used as first table dat
                 : "N/A";
             string logicalName = attr.Metadata.LogicalName;
 
+            int maxWidth = 0;
+            foreach (AttributeInfo ai in ((ComboBox)sender).Items)
+            {
+                var width = TextRenderer.MeasureText(ai.Metadata.LogicalName, e.Font).Width;
+                if (width > maxWidth) maxWidth = width;
+            }
+
             // Get the bounds for the first column
             Rectangle r1 = e.Bounds;
-            r1.Width /= 2;
+            r1.Width -= maxWidth;
 
             // Draw the text on the first column
             using (SolidBrush sb = new SolidBrush(e.ForeColor))
             {
-                e.Graphics.DrawString(displayName, e.Font, sb, r1);
+                TextRenderer.DrawText(e.Graphics, displayName, e.Font, r1, e.ForeColor, TextFormatFlags.EndEllipsis);
             }
 
             // Get the bounds for the second column
             Rectangle r2 = e.Bounds;
-            r2.X = e.Bounds.Width / 2;
-            r2.Width /= 2;
+            r2.X = r1.Width;
+            r2.Width = maxWidth;
 
             // Draw the text on the second column
             using (SolidBrush sb = new SolidBrush(e.ForeColor))
@@ -668,20 +686,27 @@ The data in the first column of your import file will be used as first table dat
                 : "N/A";
             string logicalName = attr.Metadata.LogicalName;
 
+            int maxWidth = 0;
+            foreach (EntityInfo ei in ((ComboBox)sender).Items)
+            {
+                var width = TextRenderer.MeasureText(ei.Metadata.LogicalName, e.Font).Width;
+                if (width > maxWidth) maxWidth = width;
+            }
+
             // Get the bounds for the first column
             Rectangle r1 = e.Bounds;
-            r1.Width /= 2;
+            r1.Width -= maxWidth;
 
             // Draw the text on the first column
             using (SolidBrush sb = new SolidBrush(e.ForeColor))
             {
-                e.Graphics.DrawString(displayName, e.Font, sb, r1);
+                TextRenderer.DrawText(e.Graphics, displayName, e.Font, r1, e.ForeColor, TextFormatFlags.EndEllipsis);
             }
 
             // Get the bounds for the second column
             Rectangle r2 = e.Bounds;
-            r2.X = e.Bounds.Width / 2;
-            r2.Width /= 2;
+            r2.X = r1.Width;
+            r2.Width = maxWidth;
 
             // Draw the text on the second column
             using (SolidBrush sb = new SolidBrush(e.ForeColor))
@@ -705,37 +730,40 @@ The data in the first column of your import file will be used as first table dat
             string name = rel.Metadata.IntersectEntityName;
             string entity1 = rel.Metadata.Entity1LogicalName;
             string entity2 = rel.Metadata.Entity2LogicalName;
+            string textToUse = entity1;
+
+            if (((EntityInfo)cbbFirstEntity.SelectedItem).Metadata.LogicalName == entity1.ToLower())
+            {
+                textToUse = entity2;
+            }
+
+            var maxWidth = 0;
+            foreach (RelationshipInfo ri in ((ComboBox)sender).Items)
+            {
+                string txtToEvaluate = ri.Metadata.Entity1LogicalName == ((EntityInfo)cbbFirstEntity.SelectedItem).Metadata.LogicalName ? ri.Metadata.Entity2LogicalName : ri.Metadata.Entity1LogicalName;
+                var width = TextRenderer.MeasureText(txtToEvaluate, e.Font).Width;
+                if (width > maxWidth) maxWidth = width;
+            }
 
             // Get the bounds for the first column
             Rectangle r1 = e.Bounds;
-            r1.Width /= 3;
+            r1.Width -= maxWidth;
 
             // Draw the text on the first column
             using (SolidBrush sb = new SolidBrush(e.ForeColor))
             {
-                e.Graphics.DrawString(name, e.Font, sb, r1);
+                TextRenderer.DrawText(e.Graphics, name, e.Font, r1, e.ForeColor, TextFormatFlags.EndEllipsis);
             }
 
             // Get the bounds for the second column
             Rectangle r2 = e.Bounds;
-            r2.X = e.Bounds.Width / 3;
-            r2.Width /= 3;
+            r2.X = e.Bounds.Width - maxWidth;
+            r2.Width = maxWidth;
 
             // Draw the text on the second column
             using (SolidBrush sb = new SolidBrush(e.ForeColor))
             {
-                e.Graphics.DrawString(entity1, e.Font, sb, r2);
-            }
-
-            // Get the bounds for the third column
-            Rectangle r3 = e.Bounds;
-            r3.X = e.Bounds.Width / 3 * 2;
-            r3.Width /= 3;
-
-            // Draw the text on the third column
-            using (SolidBrush sb = new SolidBrush(e.ForeColor))
-            {
-                e.Graphics.DrawString(entity2, e.Font, sb, r3);
+                e.Graphics.DrawString(textToUse, e.Font, sb, r2);
             }
         }
 

@@ -54,8 +54,6 @@ namespace Javista.XrmToolBox.ManageNN
             this.cbbRelationship = new System.Windows.Forms.ComboBox();
             this.cbbSecondEntity = new System.Windows.Forms.ComboBox();
             this.tsMain = new System.Windows.Forms.ToolStrip();
-            this.tsbClose = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbLoadMetadata = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbImportNN = new System.Windows.Forms.ToolStripButton();
@@ -94,7 +92,17 @@ namespace Javista.XrmToolBox.ManageNN
             this.btnBrowse = new System.Windows.Forms.Button();
             this.txtFilePath = new System.Windows.Forms.TextBox();
             this.gbLog = new System.Windows.Forms.GroupBox();
+            this.lvLogs = new System.Windows.Forms.ListView();
+            this.chLogStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chLogLineNumber = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chLogFirstValue = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chLogSecondValue = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chLogStatusText = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chLogMessage = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.statusImageList = new System.Windows.Forms.ImageList(this.components);
+            this.pnlFilterLogs = new System.Windows.Forms.Panel();
+            this.chkHideAlreadyExists = new System.Windows.Forms.CheckBox();
+            this.chkShowErrorsOnly = new System.Windows.Forms.CheckBox();
             this.pnlStats = new System.Windows.Forms.Panel();
             this.lblError = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
@@ -104,16 +112,7 @@ namespace Javista.XrmToolBox.ManageNN
             this.label5 = new System.Windows.Forms.Label();
             this.lblTotal = new System.Windows.Forms.Label();
             this.lblTotalLabel = new System.Windows.Forms.Label();
-            this.pnlFilterLogs = new System.Windows.Forms.Panel();
-            this.lvLogs = new System.Windows.Forms.ListView();
-            this.chLogStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chLogLineNumber = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chLogFirstValue = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chLogSecondValue = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chLogStatusText = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chLogMessage = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chkShowErrorsOnly = new System.Windows.Forms.CheckBox();
-            this.chkHideAlreadyExists = new System.Windows.Forms.CheckBox();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tsMain.SuspendLayout();
             this.gbFirst.SuspendLayout();
             this.gbRelationship.SuspendLayout();
@@ -121,54 +120,54 @@ namespace Javista.XrmToolBox.ManageNN
             this.gbImportFile.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudBatchCount)).BeginInit();
             this.gbLog.SuspendLayout();
-            this.pnlStats.SuspendLayout();
             this.pnlFilterLogs.SuspendLayout();
+            this.pnlStats.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // cbbFirstEntity
             // 
-            this.cbbFirstEntity.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbbFirstEntity.Dock = System.Windows.Forms.DockStyle.Top;
             this.cbbFirstEntity.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbbFirstEntity.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbbFirstEntity.FormattingEnabled = true;
-            this.cbbFirstEntity.Location = new System.Drawing.Point(6, 19);
+            this.cbbFirstEntity.Location = new System.Drawing.Point(3, 18);
             this.cbbFirstEntity.Name = "cbbFirstEntity";
-            this.cbbFirstEntity.Size = new System.Drawing.Size(1068, 28);
+            this.cbbFirstEntity.Size = new System.Drawing.Size(344, 26);
             this.cbbFirstEntity.Sorted = true;
             this.cbbFirstEntity.TabIndex = 0;
             this.cbbFirstEntity.SelectedIndexChanged += new System.EventHandler(this.cbbFirstEntity_SelectedIndexChanged);
             // 
             // cbbRelationship
             // 
-            this.cbbRelationship.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbbRelationship.Dock = System.Windows.Forms.DockStyle.Top;
             this.cbbRelationship.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbbRelationship.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbbRelationship.FormattingEnabled = true;
-            this.cbbRelationship.Location = new System.Drawing.Point(9, 19);
+            this.cbbRelationship.Location = new System.Drawing.Point(3, 18);
             this.cbbRelationship.Name = "cbbRelationship";
-            this.cbbRelationship.Size = new System.Drawing.Size(1065, 28);
+            this.cbbRelationship.Size = new System.Drawing.Size(344, 26);
             this.cbbRelationship.Sorted = true;
             this.cbbRelationship.TabIndex = 1;
             this.cbbRelationship.SelectedIndexChanged += new System.EventHandler(this.cbbRelationship_SelectedIndexChanged);
             // 
             // cbbSecondEntity
             // 
-            this.cbbSecondEntity.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbbSecondEntity.Dock = System.Windows.Forms.DockStyle.Top;
             this.cbbSecondEntity.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbbSecondEntity.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbbSecondEntity.FormattingEnabled = true;
-            this.cbbSecondEntity.Location = new System.Drawing.Point(9, 20);
+            this.cbbSecondEntity.Location = new System.Drawing.Point(3, 18);
             this.cbbSecondEntity.Name = "cbbSecondEntity";
-            this.cbbSecondEntity.Size = new System.Drawing.Size(1065, 28);
+            this.cbbSecondEntity.Size = new System.Drawing.Size(356, 26);
             this.cbbSecondEntity.Sorted = true;
             this.cbbSecondEntity.TabIndex = 2;
             this.cbbSecondEntity.SelectedIndexChanged += new System.EventHandler(this.cbbSecondEntity_SelectedIndexChanged);
             // 
             // tsMain
             // 
+            this.tsMain.ImageScalingSize = new System.Drawing.Size(32, 32);
             this.tsMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsbClose,
-            this.toolStripSeparator3,
             this.tsbLoadMetadata,
             this.toolStripSeparator1,
             this.tsbImportNN,
@@ -185,46 +184,31 @@ namespace Javista.XrmToolBox.ManageNN
             this.tsbClearLogs});
             this.tsMain.Location = new System.Drawing.Point(0, 0);
             this.tsMain.Name = "tsMain";
-            this.tsMain.Size = new System.Drawing.Size(1080, 38);
+            this.tsMain.Size = new System.Drawing.Size(1080, 39);
             this.tsMain.TabIndex = 3;
             this.tsMain.Text = "tsMain";
             // 
-            // tsbClose
-            // 
-            this.tsbClose.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbClose.Image = ((System.Drawing.Image)(resources.GetObject("tsbClose.Image")));
-            this.tsbClose.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbClose.Name = "tsbClose";
-            this.tsbClose.Size = new System.Drawing.Size(34, 33);
-            this.tsbClose.Text = "Close this tool";
-            this.tsbClose.Click += new System.EventHandler(this.tsbClose_Click);
-            // 
-            // toolStripSeparator3
-            // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 34);
-            // 
             // tsbLoadMetadata
             // 
-            this.tsbLoadMetadata.Image = ((System.Drawing.Image)(resources.GetObject("tsbLoadMetadata.Image")));
+            this.tsbLoadMetadata.Image = global::Javista.XrmToolBox.ImportNN.Properties.Resources.Dataverse_32x32;
             this.tsbLoadMetadata.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbLoadMetadata.Name = "tsbLoadMetadata";
-            this.tsbLoadMetadata.Size = new System.Drawing.Size(159, 29);
+            this.tsbLoadMetadata.Size = new System.Drawing.Size(146, 36);
             this.tsbLoadMetadata.Text = "Load Metadata";
             this.tsbLoadMetadata.Click += new System.EventHandler(this.tsbLoadMetadata_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 34);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 39);
             // 
             // tsbImportNN
             // 
             this.tsbImportNN.Enabled = false;
-            this.tsbImportNN.Image = ((System.Drawing.Image)(resources.GetObject("tsbImportNN.Image")));
+            this.tsbImportNN.Image = global::Javista.XrmToolBox.ImportNN.Properties.Resources.import;
             this.tsbImportNN.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbImportNN.Name = "tsbImportNN";
-            this.tsbImportNN.Size = new System.Drawing.Size(95, 29);
+            this.tsbImportNN.Size = new System.Drawing.Size(90, 36);
             this.tsbImportNN.Text = "Import";
             this.tsbImportNN.ToolTipText = "Import NN relationships";
             this.tsbImportNN.Click += new System.EventHandler(this.tsbImportNN_Click);
@@ -232,10 +216,10 @@ namespace Javista.XrmToolBox.ManageNN
             // tsbExport
             // 
             this.tsbExport.Enabled = false;
-            this.tsbExport.Image = ((System.Drawing.Image)(resources.GetObject("tsbExport.Image")));
+            this.tsbExport.Image = global::Javista.XrmToolBox.ImportNN.Properties.Resources.export;
             this.tsbExport.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbExport.Name = "tsbExport";
-            this.tsbExport.Size = new System.Drawing.Size(91, 29);
+            this.tsbExport.Size = new System.Drawing.Size(88, 36);
             this.tsbExport.Text = "Export";
             this.tsbExport.ToolTipText = "Export NN relationships";
             this.tsbExport.Click += new System.EventHandler(this.tsbExport_Click);
@@ -243,20 +227,20 @@ namespace Javista.XrmToolBox.ManageNN
             // tsbDelete
             // 
             this.tsbDelete.Enabled = false;
-            this.tsbDelete.Image = ((System.Drawing.Image)(resources.GetObject("tsbDelete.Image")));
+            this.tsbDelete.Image = global::Javista.XrmToolBox.ImportNN.Properties.Resources.delete;
             this.tsbDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbDelete.Name = "tsbDelete";
-            this.tsbDelete.Size = new System.Drawing.Size(90, 29);
+            this.tsbDelete.Size = new System.Drawing.Size(89, 36);
             this.tsbDelete.Text = "Delete";
             this.tsbDelete.ToolTipText = "Delete NN relationships";
             this.tsbDelete.Click += new System.EventHandler(this.tsbDelete_Click);
             // 
             // tsbCancel
             // 
-            this.tsbCancel.Image = global::Javista.XrmToolBox.ImportNN.Properties.Resources.control_stop;
+            this.tsbCancel.Image = global::Javista.XrmToolBox.ImportNN.Properties.Resources.stop;
             this.tsbCancel.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbCancel.Name = "tsbCancel";
-            this.tsbCancel.Size = new System.Drawing.Size(91, 29);
+            this.tsbCancel.Size = new System.Drawing.Size(89, 36);
             this.tsbCancel.Text = "Cancel";
             this.tsbCancel.Visible = false;
             this.tsbCancel.Click += new System.EventHandler(this.tsbCancel_Click);
@@ -264,7 +248,7 @@ namespace Javista.XrmToolBox.ManageNN
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(6, 34);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(6, 39);
             // 
             // tsddbSeparator
             // 
@@ -277,7 +261,7 @@ namespace Javista.XrmToolBox.ManageNN
             this.tsddbSeparator.Image = ((System.Drawing.Image)(resources.GetObject("tsddbSeparator.Image")));
             this.tsddbSeparator.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsddbSeparator.Name = "tsddbSeparator";
-            this.tsddbSeparator.Size = new System.Drawing.Size(184, 29);
+            this.tsddbSeparator.Size = new System.Drawing.Size(151, 36);
             this.tsddbSeparator.Tag = ',';
             this.tsddbSeparator.Text = "Separator : Comma";
             this.tsddbSeparator.ToolTipText = "Select the separator to use to read/create the file that manages NN relationships" +
@@ -288,32 +272,36 @@ namespace Javista.XrmToolBox.ManageNN
             // 
             this.commaToolStripMenuItem.Checked = true;
             this.commaToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.commaToolStripMenuItem.Image = global::Javista.XrmToolBox.ImportNN.Properties.Resources.comma;
             this.commaToolStripMenuItem.Name = "commaToolStripMenuItem";
-            this.commaToolStripMenuItem.Size = new System.Drawing.Size(216, 34);
+            this.commaToolStripMenuItem.Size = new System.Drawing.Size(236, 38);
             this.commaToolStripMenuItem.Text = "Comma (,)";
             // 
             // semicolonToolStripMenuItem
             // 
+            this.semicolonToolStripMenuItem.Image = global::Javista.XrmToolBox.ImportNN.Properties.Resources.semicolon;
             this.semicolonToolStripMenuItem.Name = "semicolonToolStripMenuItem";
-            this.semicolonToolStripMenuItem.Size = new System.Drawing.Size(216, 34);
+            this.semicolonToolStripMenuItem.Size = new System.Drawing.Size(236, 38);
             this.semicolonToolStripMenuItem.Text = "Semicolon (;)";
             // 
             // pipeToolStripMenuItem
             // 
+            this.pipeToolStripMenuItem.Image = global::Javista.XrmToolBox.ImportNN.Properties.Resources.bar;
             this.pipeToolStripMenuItem.Name = "pipeToolStripMenuItem";
-            this.pipeToolStripMenuItem.Size = new System.Drawing.Size(216, 34);
+            this.pipeToolStripMenuItem.Size = new System.Drawing.Size(236, 38);
             this.pipeToolStripMenuItem.Text = "Pipe (|)";
             // 
             // tabToolStripMenuItem
             // 
+            this.tabToolStripMenuItem.Image = global::Javista.XrmToolBox.ImportNN.Properties.Resources.key;
             this.tabToolStripMenuItem.Name = "tabToolStripMenuItem";
-            this.tabToolStripMenuItem.Size = new System.Drawing.Size(216, 34);
+            this.tabToolStripMenuItem.Size = new System.Drawing.Size(236, 38);
             this.tabToolStripMenuItem.Text = "Tab";
             // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 34);
+            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 39);
             // 
             // tsbDebug
             // 
@@ -322,7 +310,7 @@ namespace Javista.XrmToolBox.ManageNN
             this.tsbDebug.Image = ((System.Drawing.Image)(resources.GetObject("tsbDebug.Image")));
             this.tsbDebug.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbDebug.Name = "tsbDebug";
-            this.tsbDebug.Size = new System.Drawing.Size(110, 29);
+            this.tsbDebug.Size = new System.Drawing.Size(90, 36);
             this.tsbDebug.Text = "Debug : Off";
             this.tsbDebug.ToolTipText = "Add additional information in the log\r\n\r\nUse only when the operation does not wor" +
     "k as expected. It might impact performance.";
@@ -331,30 +319,30 @@ namespace Javista.XrmToolBox.ManageNN
             // toolStripSeparator7
             // 
             this.toolStripSeparator7.Name = "toolStripSeparator7";
-            this.toolStripSeparator7.Size = new System.Drawing.Size(6, 34);
+            this.toolStripSeparator7.Size = new System.Drawing.Size(6, 39);
             // 
             // tslLogs
             // 
             this.tslLogs.Name = "tslLogs";
-            this.tslLogs.Size = new System.Drawing.Size(59, 29);
+            this.tslLogs.Size = new System.Drawing.Size(47, 36);
             this.tslLogs.Text = "Logs :";
             // 
             // tsbExportLogs
             // 
             this.tsbExportLogs.Enabled = false;
-            this.tsbExportLogs.Image = ((System.Drawing.Image)(resources.GetObject("tsbExportLogs.Image")));
+            this.tsbExportLogs.Image = global::Javista.XrmToolBox.ImportNN.Properties.Resources.Details32;
             this.tsbExportLogs.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbExportLogs.Name = "tsbExportLogs";
-            this.tsbExportLogs.Size = new System.Drawing.Size(91, 29);
+            this.tsbExportLogs.Size = new System.Drawing.Size(88, 36);
             this.tsbExportLogs.Text = "Export";
             this.tsbExportLogs.Click += new System.EventHandler(this.tsbExportLogs_Click);
             // 
             // tsbClearLogs
             // 
-            this.tsbClearLogs.Image = ((System.Drawing.Image)(resources.GetObject("tsbClearLogs.Image")));
+            this.tsbClearLogs.Image = global::Javista.XrmToolBox.ImportNN.Properties.Resources.Eraser32;
             this.tsbClearLogs.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbClearLogs.Name = "tsbClearLogs";
-            this.tsbClearLogs.Size = new System.Drawing.Size(79, 29);
+            this.tsbClearLogs.Size = new System.Drawing.Size(79, 36);
             this.tsbClearLogs.Text = "Clear";
             this.tsbClearLogs.Click += new System.EventHandler(this.tsbClearLogs_Click);
             // 
@@ -365,44 +353,47 @@ namespace Javista.XrmToolBox.ManageNN
             this.gbFirst.Controls.Add(this.rdbFirstGuid);
             this.gbFirst.Controls.Add(this.label2);
             this.gbFirst.Controls.Add(this.cbbFirstEntity);
-            this.gbFirst.Dock = System.Windows.Forms.DockStyle.Top;
-            this.gbFirst.Location = new System.Drawing.Point(0, 38);
+            this.gbFirst.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gbFirst.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.gbFirst.Location = new System.Drawing.Point(3, 3);
             this.gbFirst.Name = "gbFirst";
-            this.gbFirst.Size = new System.Drawing.Size(1080, 80);
+            this.gbFirst.Size = new System.Drawing.Size(350, 187);
             this.gbFirst.TabIndex = 5;
             this.gbFirst.TabStop = false;
             this.gbFirst.Text = "First Entity";
             // 
             // cbbFirstEntityAttribute
             // 
-            this.cbbFirstEntityAttribute.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbbFirstEntityAttribute.Dock = System.Windows.Forms.DockStyle.Top;
             this.cbbFirstEntityAttribute.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbbFirstEntityAttribute.Enabled = false;
+            this.cbbFirstEntityAttribute.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbbFirstEntityAttribute.FormattingEnabled = true;
-            this.cbbFirstEntityAttribute.Location = new System.Drawing.Point(353, 46);
+            this.cbbFirstEntityAttribute.Location = new System.Drawing.Point(3, 153);
             this.cbbFirstEntityAttribute.Name = "cbbFirstEntityAttribute";
-            this.cbbFirstEntityAttribute.Size = new System.Drawing.Size(721, 28);
+            this.cbbFirstEntityAttribute.Size = new System.Drawing.Size(344, 26);
             this.cbbFirstEntityAttribute.Sorted = true;
             this.cbbFirstEntityAttribute.TabIndex = 4;
             // 
             // rdbFirstAttribute
             // 
-            this.rdbFirstAttribute.AutoSize = true;
-            this.rdbFirstAttribute.Location = new System.Drawing.Point(243, 47);
+            this.rdbFirstAttribute.Dock = System.Windows.Forms.DockStyle.Top;
+            this.rdbFirstAttribute.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rdbFirstAttribute.Location = new System.Drawing.Point(3, 119);
             this.rdbFirstAttribute.Name = "rdbFirstAttribute";
-            this.rdbFirstAttribute.Size = new System.Drawing.Size(153, 24);
+            this.rdbFirstAttribute.Size = new System.Drawing.Size(344, 34);
             this.rdbFirstAttribute.TabIndex = 3;
             this.rdbFirstAttribute.Text = "Specific attribute";
             this.rdbFirstAttribute.UseVisualStyleBackColor = true;
             // 
             // rdbFirstGuid
             // 
-            this.rdbFirstGuid.AutoSize = true;
             this.rdbFirstGuid.Checked = true;
-            this.rdbFirstGuid.Location = new System.Drawing.Point(135, 47);
+            this.rdbFirstGuid.Dock = System.Windows.Forms.DockStyle.Top;
+            this.rdbFirstGuid.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rdbFirstGuid.Location = new System.Drawing.Point(3, 79);
             this.rdbFirstGuid.Name = "rdbFirstGuid";
-            this.rdbFirstGuid.Size = new System.Drawing.Size(151, 24);
+            this.rdbFirstGuid.Size = new System.Drawing.Size(344, 40);
             this.rdbFirstGuid.TabIndex = 2;
             this.rdbFirstGuid.TabStop = true;
             this.rdbFirstGuid.Text = "Unique Identifier";
@@ -411,20 +402,22 @@ namespace Javista.XrmToolBox.ManageNN
             // 
             // label2
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 49);
+            this.label2.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label2.Location = new System.Drawing.Point(3, 44);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(133, 20);
+            this.label2.Size = new System.Drawing.Size(344, 35);
             this.label2.TabIndex = 1;
             this.label2.Text = "Mapping attribute";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // gbRelationship
             // 
             this.gbRelationship.Controls.Add(this.cbbRelationship);
-            this.gbRelationship.Dock = System.Windows.Forms.DockStyle.Top;
-            this.gbRelationship.Location = new System.Drawing.Point(0, 118);
+            this.gbRelationship.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gbRelationship.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.gbRelationship.Location = new System.Drawing.Point(359, 3);
             this.gbRelationship.Name = "gbRelationship";
-            this.gbRelationship.Size = new System.Drawing.Size(1080, 54);
+            this.gbRelationship.Size = new System.Drawing.Size(350, 187);
             this.gbRelationship.TabIndex = 6;
             this.gbRelationship.TabStop = false;
             this.gbRelationship.Text = "Relationship";
@@ -436,44 +429,47 @@ namespace Javista.XrmToolBox.ManageNN
             this.gbSecond.Controls.Add(this.rdbSecondGuid);
             this.gbSecond.Controls.Add(this.label1);
             this.gbSecond.Controls.Add(this.cbbSecondEntity);
-            this.gbSecond.Dock = System.Windows.Forms.DockStyle.Top;
-            this.gbSecond.Location = new System.Drawing.Point(0, 172);
+            this.gbSecond.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gbSecond.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.gbSecond.Location = new System.Drawing.Point(715, 3);
             this.gbSecond.Name = "gbSecond";
-            this.gbSecond.Size = new System.Drawing.Size(1080, 80);
+            this.gbSecond.Size = new System.Drawing.Size(362, 187);
             this.gbSecond.TabIndex = 6;
             this.gbSecond.TabStop = false;
             this.gbSecond.Text = "Second Entity";
             // 
             // cbbSecondEntityAttribute
             // 
-            this.cbbSecondEntityAttribute.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbbSecondEntityAttribute.Dock = System.Windows.Forms.DockStyle.Top;
             this.cbbSecondEntityAttribute.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbbSecondEntityAttribute.Enabled = false;
+            this.cbbSecondEntityAttribute.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbbSecondEntityAttribute.FormattingEnabled = true;
-            this.cbbSecondEntityAttribute.Location = new System.Drawing.Point(353, 46);
+            this.cbbSecondEntityAttribute.Location = new System.Drawing.Point(3, 153);
             this.cbbSecondEntityAttribute.Name = "cbbSecondEntityAttribute";
-            this.cbbSecondEntityAttribute.Size = new System.Drawing.Size(721, 28);
+            this.cbbSecondEntityAttribute.Size = new System.Drawing.Size(356, 26);
             this.cbbSecondEntityAttribute.Sorted = true;
             this.cbbSecondEntityAttribute.TabIndex = 4;
             // 
             // rdbSecondAttribute
             // 
-            this.rdbSecondAttribute.AutoSize = true;
-            this.rdbSecondAttribute.Location = new System.Drawing.Point(243, 47);
+            this.rdbSecondAttribute.Dock = System.Windows.Forms.DockStyle.Top;
+            this.rdbSecondAttribute.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rdbSecondAttribute.Location = new System.Drawing.Point(3, 119);
             this.rdbSecondAttribute.Name = "rdbSecondAttribute";
-            this.rdbSecondAttribute.Size = new System.Drawing.Size(153, 24);
+            this.rdbSecondAttribute.Size = new System.Drawing.Size(356, 34);
             this.rdbSecondAttribute.TabIndex = 3;
             this.rdbSecondAttribute.Text = "Specific attribute";
             this.rdbSecondAttribute.UseVisualStyleBackColor = true;
             // 
             // rdbSecondGuid
             // 
-            this.rdbSecondGuid.AutoSize = true;
             this.rdbSecondGuid.Checked = true;
-            this.rdbSecondGuid.Location = new System.Drawing.Point(135, 47);
+            this.rdbSecondGuid.Dock = System.Windows.Forms.DockStyle.Top;
+            this.rdbSecondGuid.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rdbSecondGuid.Location = new System.Drawing.Point(3, 79);
             this.rdbSecondGuid.Name = "rdbSecondGuid";
-            this.rdbSecondGuid.Size = new System.Drawing.Size(151, 24);
+            this.rdbSecondGuid.Size = new System.Drawing.Size(356, 40);
             this.rdbSecondGuid.TabIndex = 2;
             this.rdbSecondGuid.TabStop = true;
             this.rdbSecondGuid.Text = "Unique Identifier";
@@ -482,12 +478,13 @@ namespace Javista.XrmToolBox.ManageNN
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 49);
+            this.label1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label1.Location = new System.Drawing.Point(3, 44);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(133, 20);
+            this.label1.Size = new System.Drawing.Size(356, 35);
             this.label1.TabIndex = 1;
             this.label1.Text = "Mapping attribute";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // gbImportFile
             // 
@@ -499,15 +496,17 @@ namespace Javista.XrmToolBox.ManageNN
             this.gbImportFile.Controls.Add(this.btnBrowse);
             this.gbImportFile.Controls.Add(this.txtFilePath);
             this.gbImportFile.Dock = System.Windows.Forms.DockStyle.Top;
-            this.gbImportFile.Location = new System.Drawing.Point(0, 252);
+            this.gbImportFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.gbImportFile.Location = new System.Drawing.Point(0, 232);
             this.gbImportFile.Name = "gbImportFile";
-            this.gbImportFile.Size = new System.Drawing.Size(1080, 119);
+            this.gbImportFile.Size = new System.Drawing.Size(1080, 131);
             this.gbImportFile.TabIndex = 7;
             this.gbImportFile.TabStop = false;
             this.gbImportFile.Text = "Import/Delete file and settings";
             // 
             // nudBatchCount
             // 
+            this.nudBatchCount.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.nudBatchCount.Increment = new decimal(new int[] {
             10,
             0,
@@ -525,7 +524,7 @@ namespace Javista.XrmToolBox.ManageNN
             0,
             0});
             this.nudBatchCount.Name = "nudBatchCount";
-            this.nudBatchCount.Size = new System.Drawing.Size(120, 26);
+            this.nudBatchCount.Size = new System.Drawing.Size(188, 27);
             this.nudBatchCount.TabIndex = 6;
             this.nudBatchCount.Value = new decimal(new int[] {
             100,
@@ -536,18 +535,20 @@ namespace Javista.XrmToolBox.ManageNN
             // lblBatchCount
             // 
             this.lblBatchCount.AutoSize = true;
+            this.lblBatchCount.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblBatchCount.Location = new System.Drawing.Point(582, 55);
             this.lblBatchCount.Name = "lblBatchCount";
-            this.lblBatchCount.Size = new System.Drawing.Size(95, 20);
+            this.lblBatchCount.Size = new System.Drawing.Size(76, 16);
             this.lblBatchCount.TabIndex = 5;
             this.lblBatchCount.Text = "Batch count";
             // 
             // chkImportInBatch
             // 
             this.chkImportInBatch.AutoSize = true;
+            this.chkImportInBatch.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkImportInBatch.Location = new System.Drawing.Point(405, 54);
             this.chkImportInBatch.Name = "chkImportInBatch";
-            this.chkImportInBatch.Size = new System.Drawing.Size(152, 24);
+            this.chkImportInBatch.Size = new System.Drawing.Size(128, 20);
             this.chkImportInBatch.TabIndex = 4;
             this.chkImportInBatch.Text = "Process in batch";
             this.chkImportInBatch.UseVisualStyleBackColor = true;
@@ -556,9 +557,10 @@ namespace Javista.XrmToolBox.ManageNN
             // 
             this.chkCacheSecondEntity.AutoSize = true;
             this.chkCacheSecondEntity.Enabled = false;
+            this.chkCacheSecondEntity.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkCacheSecondEntity.Location = new System.Drawing.Point(10, 84);
             this.chkCacheSecondEntity.Name = "chkCacheSecondEntity";
-            this.chkCacheSecondEntity.Size = new System.Drawing.Size(259, 24);
+            this.chkCacheSecondEntity.Size = new System.Drawing.Size(217, 20);
             this.chkCacheSecondEntity.TabIndex = 3;
             this.chkCacheSecondEntity.Text = "Cache records for second entity";
             this.chkCacheSecondEntity.UseVisualStyleBackColor = true;
@@ -567,9 +569,10 @@ namespace Javista.XrmToolBox.ManageNN
             // 
             this.chkCacheFirstEntity.AutoSize = true;
             this.chkCacheFirstEntity.Enabled = false;
+            this.chkCacheFirstEntity.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkCacheFirstEntity.Location = new System.Drawing.Point(10, 54);
             this.chkCacheFirstEntity.Name = "chkCacheFirstEntity";
-            this.chkCacheFirstEntity.Size = new System.Drawing.Size(233, 24);
+            this.chkCacheFirstEntity.Size = new System.Drawing.Size(192, 20);
             this.chkCacheFirstEntity.TabIndex = 2;
             this.chkCacheFirstEntity.Text = "Cache records for first entity";
             this.chkCacheFirstEntity.UseVisualStyleBackColor = true;
@@ -577,9 +580,10 @@ namespace Javista.XrmToolBox.ManageNN
             // btnBrowse
             // 
             this.btnBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBrowse.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnBrowse.Location = new System.Drawing.Point(999, 19);
             this.btnBrowse.Name = "btnBrowse";
-            this.btnBrowse.Size = new System.Drawing.Size(75, 23);
+            this.btnBrowse.Size = new System.Drawing.Size(75, 27);
             this.btnBrowse.TabIndex = 1;
             this.btnBrowse.Text = "Browse";
             this.btnBrowse.UseVisualStyleBackColor = true;
@@ -589,9 +593,10 @@ namespace Javista.XrmToolBox.ManageNN
             // 
             this.txtFilePath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtFilePath.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtFilePath.Location = new System.Drawing.Point(9, 21);
             this.txtFilePath.Name = "txtFilePath";
-            this.txtFilePath.Size = new System.Drawing.Size(984, 26);
+            this.txtFilePath.Size = new System.Drawing.Size(984, 27);
             this.txtFilePath.TabIndex = 0;
             // 
             // gbLog
@@ -600,126 +605,13 @@ namespace Javista.XrmToolBox.ManageNN
             this.gbLog.Controls.Add(this.pnlFilterLogs);
             this.gbLog.Controls.Add(this.pnlStats);
             this.gbLog.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbLog.Location = new System.Drawing.Point(0, 371);
+            this.gbLog.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.gbLog.Location = new System.Drawing.Point(0, 363);
             this.gbLog.Name = "gbLog";
-            this.gbLog.Size = new System.Drawing.Size(1080, 383);
+            this.gbLog.Size = new System.Drawing.Size(1080, 378);
             this.gbLog.TabIndex = 8;
             this.gbLog.TabStop = false;
             this.gbLog.Text = "Log";
-            // 
-            // statusImageList
-            // 
-            this.statusImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("statusImageList.ImageStream")));
-            this.statusImageList.TransparentColor = System.Drawing.Color.Transparent;
-            this.statusImageList.Images.SetKeyName(0, "tick.png");
-            this.statusImageList.Images.SetKeyName(1, "cross.png");
-            // 
-            // pnlStats
-            // 
-            this.pnlStats.Controls.Add(this.lblError);
-            this.pnlStats.Controls.Add(this.label9);
-            this.pnlStats.Controls.Add(this.lblSuccess);
-            this.pnlStats.Controls.Add(this.label7);
-            this.pnlStats.Controls.Add(this.lblProcessed);
-            this.pnlStats.Controls.Add(this.label5);
-            this.pnlStats.Controls.Add(this.lblTotal);
-            this.pnlStats.Controls.Add(this.lblTotalLabel);
-            this.pnlStats.Dock = System.Windows.Forms.DockStyle.Left;
-            this.pnlStats.Location = new System.Drawing.Point(3, 22);
-            this.pnlStats.Name = "pnlStats";
-            this.pnlStats.Size = new System.Drawing.Size(200, 358);
-            this.pnlStats.TabIndex = 1;
-            this.pnlStats.Visible = false;
-            // 
-            // lblError
-            // 
-            this.lblError.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lblError.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblError.Location = new System.Drawing.Point(0, 217);
-            this.lblError.Name = "lblError";
-            this.lblError.Size = new System.Drawing.Size(200, 31);
-            this.lblError.TabIndex = 7;
-            this.lblError.Text = "0";
-            // 
-            // label9
-            // 
-            this.label9.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label9.Location = new System.Drawing.Point(0, 186);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(200, 31);
-            this.label9.TabIndex = 6;
-            this.label9.Text = "Error";
-            // 
-            // lblSuccess
-            // 
-            this.lblSuccess.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lblSuccess.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblSuccess.Location = new System.Drawing.Point(0, 155);
-            this.lblSuccess.Name = "lblSuccess";
-            this.lblSuccess.Size = new System.Drawing.Size(200, 31);
-            this.lblSuccess.TabIndex = 5;
-            this.lblSuccess.Text = "0";
-            // 
-            // label7
-            // 
-            this.label7.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(0, 124);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(200, 31);
-            this.label7.TabIndex = 4;
-            this.label7.Text = "Success";
-            // 
-            // lblProcessed
-            // 
-            this.lblProcessed.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lblProcessed.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblProcessed.Location = new System.Drawing.Point(0, 93);
-            this.lblProcessed.Name = "lblProcessed";
-            this.lblProcessed.Size = new System.Drawing.Size(200, 31);
-            this.lblProcessed.TabIndex = 3;
-            this.lblProcessed.Text = "0";
-            // 
-            // label5
-            // 
-            this.label5.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(0, 62);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(200, 31);
-            this.label5.TabIndex = 2;
-            this.label5.Text = "Processed";
-            // 
-            // lblTotal
-            // 
-            this.lblTotal.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lblTotal.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTotal.Location = new System.Drawing.Point(0, 31);
-            this.lblTotal.Name = "lblTotal";
-            this.lblTotal.Size = new System.Drawing.Size(200, 31);
-            this.lblTotal.TabIndex = 1;
-            this.lblTotal.Text = "0";
-            // 
-            // lblTotalLabel
-            // 
-            this.lblTotalLabel.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lblTotalLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTotalLabel.Location = new System.Drawing.Point(0, 0);
-            this.lblTotalLabel.Name = "lblTotalLabel";
-            this.lblTotalLabel.Size = new System.Drawing.Size(200, 31);
-            this.lblTotalLabel.TabIndex = 0;
-            this.lblTotalLabel.Text = "Number of lines";
-            // 
-            // pnlFilterLogs
-            // 
-            this.pnlFilterLogs.Controls.Add(this.chkHideAlreadyExists);
-            this.pnlFilterLogs.Controls.Add(this.chkShowErrorsOnly);
-            this.pnlFilterLogs.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlFilterLogs.Location = new System.Drawing.Point(203, 22);
-            this.pnlFilterLogs.Name = "pnlFilterLogs";
-            this.pnlFilterLogs.Size = new System.Drawing.Size(874, 37);
-            this.pnlFilterLogs.TabIndex = 4;
             // 
             // lvLogs
             // 
@@ -731,11 +623,12 @@ namespace Javista.XrmToolBox.ManageNN
             this.chLogStatusText,
             this.chLogMessage});
             this.lvLogs.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lvLogs.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lvLogs.FullRowSelect = true;
             this.lvLogs.HideSelection = false;
-            this.lvLogs.Location = new System.Drawing.Point(203, 59);
+            this.lvLogs.Location = new System.Drawing.Point(316, 76);
             this.lvLogs.Name = "lvLogs";
-            this.lvLogs.Size = new System.Drawing.Size(874, 321);
+            this.lvLogs.Size = new System.Drawing.Size(761, 299);
             this.lvLogs.SmallImageList = this.statusImageList;
             this.lvLogs.TabIndex = 6;
             this.lvLogs.UseCompatibleStateImageBehavior = false;
@@ -754,13 +647,13 @@ namespace Javista.XrmToolBox.ManageNN
             // 
             this.chLogFirstValue.DisplayIndex = 3;
             this.chLogFirstValue.Text = "First Value";
-            this.chLogFirstValue.Width = 200;
+            this.chLogFirstValue.Width = 250;
             // 
             // chLogSecondValue
             // 
             this.chLogSecondValue.DisplayIndex = 4;
             this.chLogSecondValue.Text = "Second Value";
-            this.chLogSecondValue.Width = 200;
+            this.chLogSecondValue.Width = 250;
             // 
             // chLogStatusText
             // 
@@ -773,58 +666,186 @@ namespace Javista.XrmToolBox.ManageNN
             this.chLogMessage.Text = "Message";
             this.chLogMessage.Width = 300;
             // 
-            // chkShowErrorsOnly
+            // statusImageList
             // 
-            this.chkShowErrorsOnly.Dock = System.Windows.Forms.DockStyle.Left;
-            this.chkShowErrorsOnly.Location = new System.Drawing.Point(0, 0);
-            this.chkShowErrorsOnly.Name = "chkShowErrorsOnly";
-            this.chkShowErrorsOnly.Size = new System.Drawing.Size(193, 37);
-            this.chkShowErrorsOnly.TabIndex = 0;
-            this.chkShowErrorsOnly.Text = "Show Errors only";
-            this.chkShowErrorsOnly.UseVisualStyleBackColor = true;
-            this.chkShowErrorsOnly.CheckedChanged += new System.EventHandler(this.chkShowErrorsOnly_CheckedChanged);
+            this.statusImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("statusImageList.ImageStream")));
+            this.statusImageList.TransparentColor = System.Drawing.Color.Transparent;
+            this.statusImageList.Images.SetKeyName(0, "tick.png");
+            this.statusImageList.Images.SetKeyName(1, "cross.png");
+            // 
+            // pnlFilterLogs
+            // 
+            this.pnlFilterLogs.Controls.Add(this.chkHideAlreadyExists);
+            this.pnlFilterLogs.Controls.Add(this.chkShowErrorsOnly);
+            this.pnlFilterLogs.Dock = System.Windows.Forms.DockStyle.Top;
+            this.pnlFilterLogs.Location = new System.Drawing.Point(316, 18);
+            this.pnlFilterLogs.Name = "pnlFilterLogs";
+            this.pnlFilterLogs.Size = new System.Drawing.Size(761, 58);
+            this.pnlFilterLogs.TabIndex = 4;
             // 
             // chkHideAlreadyExists
             // 
             this.chkHideAlreadyExists.Dock = System.Windows.Forms.DockStyle.Left;
+            this.chkHideAlreadyExists.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkHideAlreadyExists.Location = new System.Drawing.Point(193, 0);
             this.chkHideAlreadyExists.Name = "chkHideAlreadyExists";
-            this.chkHideAlreadyExists.Size = new System.Drawing.Size(281, 37);
+            this.chkHideAlreadyExists.Size = new System.Drawing.Size(281, 58);
             this.chkHideAlreadyExists.TabIndex = 1;
             this.chkHideAlreadyExists.Text = "Hide \"Already exists\" error";
             this.chkHideAlreadyExists.UseVisualStyleBackColor = true;
             this.chkHideAlreadyExists.CheckedChanged += new System.EventHandler(this.chkHideAlreadyExists_CheckedChanged);
             // 
+            // chkShowErrorsOnly
+            // 
+            this.chkShowErrorsOnly.Dock = System.Windows.Forms.DockStyle.Left;
+            this.chkShowErrorsOnly.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkShowErrorsOnly.Location = new System.Drawing.Point(0, 0);
+            this.chkShowErrorsOnly.Name = "chkShowErrorsOnly";
+            this.chkShowErrorsOnly.Size = new System.Drawing.Size(193, 58);
+            this.chkShowErrorsOnly.TabIndex = 0;
+            this.chkShowErrorsOnly.Text = "Show Errors only";
+            this.chkShowErrorsOnly.UseVisualStyleBackColor = true;
+            this.chkShowErrorsOnly.CheckedChanged += new System.EventHandler(this.chkShowErrorsOnly_CheckedChanged);
+            // 
+            // pnlStats
+            // 
+            this.pnlStats.Controls.Add(this.lblError);
+            this.pnlStats.Controls.Add(this.label9);
+            this.pnlStats.Controls.Add(this.lblSuccess);
+            this.pnlStats.Controls.Add(this.label7);
+            this.pnlStats.Controls.Add(this.lblProcessed);
+            this.pnlStats.Controls.Add(this.label5);
+            this.pnlStats.Controls.Add(this.lblTotal);
+            this.pnlStats.Controls.Add(this.lblTotalLabel);
+            this.pnlStats.Dock = System.Windows.Forms.DockStyle.Left;
+            this.pnlStats.Location = new System.Drawing.Point(3, 18);
+            this.pnlStats.Name = "pnlStats";
+            this.pnlStats.Size = new System.Drawing.Size(313, 357);
+            this.pnlStats.TabIndex = 1;
+            this.pnlStats.Visible = false;
+            // 
+            // lblError
+            // 
+            this.lblError.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblError.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblError.Location = new System.Drawing.Point(0, 217);
+            this.lblError.Name = "lblError";
+            this.lblError.Size = new System.Drawing.Size(313, 31);
+            this.lblError.TabIndex = 7;
+            this.lblError.Text = "0";
+            // 
+            // label9
+            // 
+            this.label9.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label9.Location = new System.Drawing.Point(0, 186);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(313, 31);
+            this.label9.TabIndex = 6;
+            this.label9.Text = "Error";
+            // 
+            // lblSuccess
+            // 
+            this.lblSuccess.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblSuccess.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblSuccess.Location = new System.Drawing.Point(0, 155);
+            this.lblSuccess.Name = "lblSuccess";
+            this.lblSuccess.Size = new System.Drawing.Size(313, 31);
+            this.lblSuccess.TabIndex = 5;
+            this.lblSuccess.Text = "0";
+            // 
+            // label7
+            // 
+            this.label7.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.Location = new System.Drawing.Point(0, 124);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(313, 31);
+            this.label7.TabIndex = 4;
+            this.label7.Text = "Success";
+            // 
+            // lblProcessed
+            // 
+            this.lblProcessed.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblProcessed.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblProcessed.Location = new System.Drawing.Point(0, 93);
+            this.lblProcessed.Name = "lblProcessed";
+            this.lblProcessed.Size = new System.Drawing.Size(313, 31);
+            this.lblProcessed.TabIndex = 3;
+            this.lblProcessed.Text = "0";
+            // 
+            // label5
+            // 
+            this.label5.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Location = new System.Drawing.Point(0, 62);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(313, 31);
+            this.label5.TabIndex = 2;
+            this.label5.Text = "Processed";
+            // 
+            // lblTotal
+            // 
+            this.lblTotal.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblTotal.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTotal.Location = new System.Drawing.Point(0, 31);
+            this.lblTotal.Name = "lblTotal";
+            this.lblTotal.Size = new System.Drawing.Size(313, 31);
+            this.lblTotal.TabIndex = 1;
+            this.lblTotal.Text = "0";
+            // 
+            // lblTotalLabel
+            // 
+            this.lblTotalLabel.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblTotalLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTotalLabel.Location = new System.Drawing.Point(0, 0);
+            this.lblTotalLabel.Name = "lblTotalLabel";
+            this.lblTotalLabel.Size = new System.Drawing.Size(313, 31);
+            this.lblTotalLabel.TabIndex = 0;
+            this.lblTotalLabel.Text = "Number of lines";
+            // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.ColumnCount = 3;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 34F));
+            this.tableLayoutPanel1.Controls.Add(this.gbSecond, 2, 0);
+            this.tableLayoutPanel1.Controls.Add(this.gbRelationship, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.gbFirst, 0, 0);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 39);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 1;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1080, 193);
+            this.tableLayoutPanel1.TabIndex = 9;
+            // 
             // MainControl
             // 
             this.Controls.Add(this.gbLog);
             this.Controls.Add(this.gbImportFile);
-            this.Controls.Add(this.gbSecond);
-            this.Controls.Add(this.gbRelationship);
-            this.Controls.Add(this.gbFirst);
+            this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.tsMain);
             this.Name = "MainControl";
-            this.Size = new System.Drawing.Size(1080, 754);
+            this.Size = new System.Drawing.Size(1080, 741);
             this.tsMain.ResumeLayout(false);
             this.tsMain.PerformLayout();
             this.gbFirst.ResumeLayout(false);
-            this.gbFirst.PerformLayout();
             this.gbRelationship.ResumeLayout(false);
             this.gbSecond.ResumeLayout(false);
-            this.gbSecond.PerformLayout();
             this.gbImportFile.ResumeLayout(false);
             this.gbImportFile.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudBatchCount)).EndInit();
             this.gbLog.ResumeLayout(false);
-            this.pnlStats.ResumeLayout(false);
             this.pnlFilterLogs.ResumeLayout(false);
+            this.pnlStats.ResumeLayout(false);
+            this.tableLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
         private ToolStripButton tsbExport;
-        private ToolStripButton tsbClose;
-        private ToolStripSeparator toolStripSeparator3;
         private ToolStripButton tsbDelete;
         private ToolStripSeparator toolStripSeparator5;
         private ToolStripDropDownButton tsddbSeparator;
@@ -864,5 +885,6 @@ namespace Javista.XrmToolBox.ManageNN
         private Panel pnlFilterLogs;
         private CheckBox chkHideAlreadyExists;
         private CheckBox chkShowErrorsOnly;
+        private TableLayoutPanel tableLayoutPanel1;
     }
 }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  

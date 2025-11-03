@@ -7,9 +7,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Import/Export NN relationships")]
 [assembly: AssemblyDescription("Allows you to import and export many to many relationships")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Javista")]
+[assembly: AssemblyCompany("MscrmTools")]
 [assembly: AssemblyProduct("Import/Export NN relationships")]
-[assembly: AssemblyCopyright("Copyright ©Javista  2014")]
+[assembly: AssemblyCopyright("Copyright ©MscrmTools  2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 // Vous pouvez spécifier toutes les valeurs ou indiquer les numéros de build et de révision par défaut
 // en utilisant '*', comme indiqué ci-dessous :
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.2024.01.13")]
-[assembly: AssemblyFileVersion("1.2024.01.13")]
+[assembly: AssemblyVersion("1.2025.11.14")]
+[assembly: AssemblyFileVersion("1.2025.11.14")]
