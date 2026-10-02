@@ -25,6 +25,18 @@ namespace Javista.XrmToolBox.ManageNN
         public MainControl()
         {
             InitializeComponent();
+
+            cbbFirstEntity.DrawMode = DrawMode.OwnerDrawFixed;
+            cbbFirstEntity.DrawItem += cbbEntity_DrawItem;
+            cbbSecondEntity.DrawMode = DrawMode.OwnerDrawFixed;
+            cbbSecondEntity.DrawItem += cbbEntity_DrawItem;
+            cbbFirstEntityAttribute.DrawMode = DrawMode.OwnerDrawFixed;
+            cbbFirstEntityAttribute.DrawItem += cbbAttribute_DrawItem;
+
+            cbbRelationship.DrawMode = DrawMode.OwnerDrawFixed;
+            cbbRelationship.DrawItem += cbbRelationship_DrawItem;
+            cbbSecondEntityAttribute.DrawMode = DrawMode.OwnerDrawFixed;
+            cbbSecondEntityAttribute.DrawItem += cbbAttribute_DrawItem;
         }
 
         public string HelpUrl => "https://github.com/MscrmTools/Javista.XrmToolBox.ManageNN/wiki";
@@ -117,9 +129,6 @@ namespace Javista.XrmToolBox.ManageNN
                 });
             }
 
-            cbbFirstEntityAttribute.DrawMode = DrawMode.OwnerDrawFixed;
-            cbbFirstEntityAttribute.DrawItem += cbbAttribute_DrawItem;
-
             if (cbbFirstEntityAttribute.Items.Count > 0)
             {
                 cbbFirstEntityAttribute.SelectedIndex = 0;
@@ -141,9 +150,6 @@ namespace Javista.XrmToolBox.ManageNN
                 MessageBox.Show(ParentForm, @"No many to many relationships found for this entity!", @"Warning",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
-
-            cbbRelationship.DrawMode = DrawMode.OwnerDrawFixed;
-            cbbRelationship.DrawItem += cbbRelationship_DrawItem;
         }
 
         private void cbbRelationship_SelectedIndexChanged(object sender, EventArgs e)
@@ -164,9 +170,6 @@ namespace Javista.XrmToolBox.ManageNN
             {
                 cbbSecondEntity.SelectedIndex = 0;
             }
-
-            cbbSecondEntity.DrawMode = DrawMode.OwnerDrawFixed;
-            cbbSecondEntity.DrawItem += cbbEntity_DrawItem;
         }
 
         private void cbbSecondEntity_SelectedIndexChanged(object sender, EventArgs e)
@@ -193,9 +196,6 @@ namespace Javista.XrmToolBox.ManageNN
             {
                 cbbSecondEntityAttribute.SelectedIndex = 0;
             }
-
-            cbbSecondEntityAttribute.DrawMode = DrawMode.OwnerDrawFixed;
-            cbbSecondEntityAttribute.DrawItem += cbbAttribute_DrawItem;
         }
 
         private void chkHideAlreadyExists_CheckedChanged(object sender, EventArgs e)
@@ -313,9 +313,6 @@ namespace Javista.XrmToolBox.ManageNN
                         {
                             cbbFirstEntity.SelectedIndex = 0;
                         }
-
-                        cbbFirstEntity.DrawMode = DrawMode.OwnerDrawFixed;
-                        cbbFirstEntity.DrawItem += cbbEntity_DrawItem;
 
                         tsbExport.Enabled = true;
                         tsbImportNN.Enabled = true;
@@ -640,16 +637,9 @@ The data in the first column of your import file will be used as first table dat
                 : "N/A";
             string logicalName = attr.Metadata.LogicalName;
 
-            int maxWidth = 0;
-            foreach (AttributeInfo ai in ((ComboBox)sender).Items)
-            {
-                var width = TextRenderer.MeasureText(ai.Metadata.LogicalName, e.Font).Width;
-                if (width > maxWidth) maxWidth = width;
-            }
-
             // Get the bounds for the first column
             Rectangle r1 = e.Bounds;
-            r1.Width -= maxWidth;
+            r1.Width = e.Bounds.Width / 2;
 
             // Draw the text on the first column
             using (SolidBrush sb = new SolidBrush(e.ForeColor))
@@ -660,12 +650,13 @@ The data in the first column of your import file will be used as first table dat
             // Get the bounds for the second column
             Rectangle r2 = e.Bounds;
             r2.X = r1.Width;
-            r2.Width = maxWidth;
+            r2.Width = e.Bounds.Width / 2;
 
             // Draw the text on the second column
             using (SolidBrush sb = new SolidBrush(e.ForeColor))
             {
-                e.Graphics.DrawString(logicalName, e.Font, sb, r2);
+                TextRenderer.DrawText(e.Graphics, logicalName, e.Font, r2, e.ForeColor, TextFormatFlags.EndEllipsis);
+                //e.Graphics.DrawString(logicalName, e.Font, sb, r2);
             }
         }
 
@@ -686,16 +677,9 @@ The data in the first column of your import file will be used as first table dat
                 : "N/A";
             string logicalName = attr.Metadata.LogicalName;
 
-            int maxWidth = 0;
-            foreach (EntityInfo ei in ((ComboBox)sender).Items)
-            {
-                var width = TextRenderer.MeasureText(ei.Metadata.LogicalName, e.Font).Width;
-                if (width > maxWidth) maxWidth = width;
-            }
-
             // Get the bounds for the first column
             Rectangle r1 = e.Bounds;
-            r1.Width -= maxWidth;
+            r1.Width = e.Bounds.Width / 2;
 
             // Draw the text on the first column
             using (SolidBrush sb = new SolidBrush(e.ForeColor))
@@ -706,12 +690,13 @@ The data in the first column of your import file will be used as first table dat
             // Get the bounds for the second column
             Rectangle r2 = e.Bounds;
             r2.X = r1.Width;
-            r2.Width = maxWidth;
+            r2.Width = e.Bounds.Width / 2;
 
             // Draw the text on the second column
             using (SolidBrush sb = new SolidBrush(e.ForeColor))
             {
-                e.Graphics.DrawString(logicalName, e.Font, sb, r2);
+                TextRenderer.DrawText(e.Graphics, logicalName, e.Font, r2, e.ForeColor, TextFormatFlags.EndEllipsis);
+                //e.Graphics.DrawString(logicalName, e.Font, sb, r2);
             }
         }
 
@@ -737,17 +722,9 @@ The data in the first column of your import file will be used as first table dat
                 textToUse = entity2;
             }
 
-            var maxWidth = 0;
-            foreach (RelationshipInfo ri in ((ComboBox)sender).Items)
-            {
-                string txtToEvaluate = ri.Metadata.Entity1LogicalName == ((EntityInfo)cbbFirstEntity.SelectedItem).Metadata.LogicalName ? ri.Metadata.Entity2LogicalName : ri.Metadata.Entity1LogicalName;
-                var width = TextRenderer.MeasureText(txtToEvaluate, e.Font).Width;
-                if (width > maxWidth) maxWidth = width;
-            }
-
             // Get the bounds for the first column
             Rectangle r1 = e.Bounds;
-            r1.Width -= maxWidth;
+            r1.Width = e.Bounds.Width / 2;
 
             // Draw the text on the first column
             using (SolidBrush sb = new SolidBrush(e.ForeColor))
@@ -757,13 +734,14 @@ The data in the first column of your import file will be used as first table dat
 
             // Get the bounds for the second column
             Rectangle r2 = e.Bounds;
-            r2.X = e.Bounds.Width - maxWidth;
-            r2.Width = maxWidth;
+            r2.X = r1.Width;
+            r2.Width = e.Bounds.Width / 2;
 
             // Draw the text on the second column
             using (SolidBrush sb = new SolidBrush(e.ForeColor))
             {
-                e.Graphics.DrawString(textToUse, e.Font, sb, r2);
+                TextRenderer.DrawText(e.Graphics, textToUse, e.Font, r2, e.ForeColor, TextFormatFlags.EndEllipsis);
+                //e.Graphics.DrawString(textToUse, e.Font, sb, r2);
             }
         }
 
